@@ -61,7 +61,7 @@ async function analyzeFootballQuery(query: string) {
   try {
     const completion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'mixtral-8x7b-32768',
+      model: 'llama-3.3-70b-versatile', // CHANGED: Updated to working model
       temperature: 0.4,
       max_tokens: 1000,
     });
@@ -69,10 +69,31 @@ async function analyzeFootballQuery(query: string) {
     const content = completion.choices[0]?.message?.content || '{}';
     console.log('🤖 Groq raw response:', content.substring(0, 200) + '...');
     
-    return JSON.parse(content);
-  } catch (error) {
+    // Try to parse JSON, fallback to default if invalid
+    try {
+      return JSON.parse(content);
+    } catch (parseError) {
+      console.warn('Failed to parse JSON response, using fallback:', parseError);
+      return {
+        analysis: content,
+        playerInfo: null,
+        teamInfo: null,
+        worldCupInfo: null,
+        videoSearchTerm: query,
+        confidenceScore: 0.7
+      };
+    }
+  } catch (error: any) {
     console.error('Groq analysis error:', error);
-    throw new Error('AI analysis failed. Please try again.');
+    
+    // Provide more specific error message
+    if (error?.message?.includes('model')) {
+      throw new Error(`AI model error: ${error.message}. Check model name in code.`);
+    }
+    if (error?.status === 401) {
+      throw new Error('Invalid API key. Check GROQ_API_KEY in Vercel environment variables.');
+    }
+    throw new Error(`AI analysis failed: ${error.message}`);
   }
 }
 
@@ -184,14 +205,14 @@ export default async function handler(
 
       return res.status(200).json(response);
       
-    } catch (error) {
+    } catch (error: any) {
       console.error('❌ API Error:', error);
       
-      // Graceful fallback
+      // Graceful fallback with more details
       return res.status(200).json({
         success: false,
         query: query,
-        error: 'AI analysis service temporarily unavailable',
+        error: error.message || 'AI analysis service temporarily unavailable',
         fallbackResponse: {
           message: `Searching for "${query}" in football database...`,
           suggestion: 'Try specific player names (Messi, Ronaldo), team names (Argentina, Brazil), or "World Cup 2026"',
