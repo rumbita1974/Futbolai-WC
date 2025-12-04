@@ -22,17 +22,17 @@ Return ONLY valid JSON with this exact structure:
 {
   "analysis": "Detailed football analysis...",
   "playerInfo": {
-    "name": "Lionel Messi",
-    "position": "Forward",
-    "nationality": "Argentinian",
-    "currentClub": "Inter Miami",
+    "name": "Player Name",
+    "position": "Position",
+    "nationality": "Nationality",
+    "currentClub": "Current Club",
     "stats": {
-      "goals": 821,
-      "assists": 357,
-      "appearances": 1042
+      "goals": 0,
+      "assists": 0,
+      "appearances": 0
     },
-    "marketValue": "€35 million",
-    "achievements": ["8x Ballon d'Or", "World Cup 2022", "4x Champions League"]
+    "marketValue": "Value",
+    "achievements": ["Achievement 1", "Achievement 2"]
   } or null,
   "teamInfo": null or {
     "name": "Team Name",
@@ -44,7 +44,7 @@ Return ONLY valid JSON with this exact structure:
     "host": "USA, Canada, Mexico",
     "details": "Details here"
   },
-  "videoSearchTerm": "messi highlights 2024",
+  "videoSearchTerm": "player highlights 2024",
   "confidenceScore": 0.95
 }
 
@@ -70,13 +70,73 @@ IMPORTANT: Return ONLY JSON, no extra text.`;
   } catch (error: any) {
     console.error('❌ Groq error:', error.message);
     console.error('Error stack:', error.stack);
-    throw error; // Re-throw to see actual error
+    throw error;
   }
 }
 
-// [Keep the rest of your existing functions: searchYouTube, generateFallbackVideoUrl]
+// Search YouTube for relevant videos
+async function searchYouTube(searchTerm: string) {
+  try {
+    const apiKey = process.env.YOUTUBE_API_KEY;
+    
+    if (!apiKey) {
+      console.warn('YouTube API key not set, using fallback');
+      return generateFallbackVideoUrl(searchTerm);
+    }
 
-// Main API handler - MODIFIED TO SHOW ERRORS
+    const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+      params: {
+        part: 'snippet',
+        q: `${searchTerm} football highlights 2024`,
+        type: 'video',
+        maxResults: 1,
+        key: apiKey,
+        videoEmbeddable: 'true',
+        safeSearch: 'strict',
+      },
+    });
+
+    if (response.data.items?.length > 0) {
+      const videoId = response.data.items[0].id.videoId;
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+  } catch (error) {
+    console.error('YouTube search error:', error);
+  }
+  
+  return generateFallbackVideoUrl(searchTerm);
+}
+
+// Generate fallback video URL based on query
+function generateFallbackVideoUrl(query: string) {
+  const queryLower = query.toLowerCase();
+  
+  const videoMap: Record<string, string> = {
+    'messi': 'https://www.youtube.com/embed/ZO0d8r_2qGI',
+    'ronaldo': 'https://www.youtube.com/embed/OUKGsb8CpF8',
+    'mbappe': 'https://www.youtube.com/embed/RdGpDPLT5Q4',
+    'haaland': 'https://www.youtube.com/embed/4XqQpQ8KZg4',
+    'neymar': 'https://www.youtube.com/embed/FIYzK8PSLpA',
+    'kane': 'https://www.youtube.com/embed/JKZfpoY0Q7c',
+    'benzema': 'https://www.youtube.com/embed/6kl7AOKVpCM',
+    'argentina': 'https://www.youtube.com/embed/eJXWcJeGXlM',
+    'brazil': 'https://www.youtube.com/embed/6MfLJBHjK0k',
+    'france': 'https://www.youtube.com/embed/J8LcQOHtQKs',
+    'world cup': 'https://www.youtube.com/embed/dZqkf1ZnQh4',
+    'champions league': 'https://www.youtube.com/embed/tKqYfL4hU2c',
+    'carvajal': 'https://www.youtube.com/embed/dZqkf1ZnQh4', // General fallback
+  };
+
+  for (const [key, url] of Object.entries(videoMap)) {
+    if (queryLower.includes(key)) {
+      return url;
+    }
+  }
+
+  return 'https://www.youtube.com/embed/dZqkf1ZnQh4';
+}
+
+// Main API handler
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -100,7 +160,7 @@ export default async function handler(
     try {
       // Try AI analysis
       const aiAnalysis = await analyzeFootballQuery(query);
-      console.log('✅ AI Analysis SUCCESS:', aiAnalysis);
+      console.log('✅ AI Analysis SUCCESS');
       
       const searchTerm = aiAnalysis.videoSearchTerm || query;
       const youtubeUrl = await searchYouTube(searchTerm);
@@ -111,14 +171,14 @@ export default async function handler(
         timestamp: new Date().toISOString(),
         players: aiAnalysis.playerInfo ? [aiAnalysis.playerInfo] : [],
         teams: aiAnalysis.teamInfo ? [aiAnalysis.teamInfo] : [],
-        worldCupInfo: aiAnalysis.worldCupInfo,
+        worldCupInfo: aiAnalysis.worldCupInfo || null,
         youtubeUrl: youtubeUrl,
-        analysis: aiAnalysis.analysis,
-        playerInfo: aiAnalysis.playerInfo,
-        teamInfo: aiAnalysis.teamInfo,
+        analysis: aiAnalysis.analysis || `Analysis of ${query}`,
+        playerInfo: aiAnalysis.playerInfo || null,
+        teamInfo: aiAnalysis.teamInfo || null,
         confidence: aiAnalysis.confidenceScore || 0.8,
         source: 'Groq AI',
-        debug: 'AI_SUCCESS' // Flag to show AI worked
+        debug: 'AI_SUCCESS'
       };
 
       console.log('📤 Sending AI response');
@@ -126,17 +186,16 @@ export default async function handler(
       
     } catch (error: any) {
       console.error('❌ API CATCH BLOCK ERROR:', error.message);
-      console.error('Full error:', error);
       
-      // Return the ACTUAL error instead of fallback
+      // For now, return error to debug
       return res.status(200).json({
         success: false,
         query: query,
         error: error.message,
         errorDetails: error.toString(),
-        stack: process.env.NODE_ENV === 'development' ? error.stack : undefined,
-        isFallback: false, // This is an actual error, not fallback
-        timestamp: new Date().toISOString()
+        timestamp: new Date().toISOString(),
+        youtubeUrl: generateFallbackVideoUrl(query),
+        debug: 'AI_FAILED'
       });
     }
   }
@@ -155,5 +214,3 @@ export default async function handler(
     }
   });
 }
-
-// [Add your existing searchYouTube and generateFallbackVideoUrl functions here]
