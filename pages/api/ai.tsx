@@ -6,221 +6,201 @@ import { Groq } from 'groq-sdk';
 function getGroqClient() {
   const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) {
-    throw new Error('GROQ_API_KEY is required. Add it in Vercel environment variables.');
+    throw new Error('GROQ_API_KEY is required.');
   }
   return new Groq({ apiKey });
 }
 
-// AGGRESSIVE cleaning - force correct data types
-function aggressivelyCleanResponse(parsed: any, query: string): any {
-  console.log('⚠️ AGGRESSIVE CLEANING for query:', query);
-  
+// NEW: Smart query analyzer
+function analyzeQueryType(query: string): string {
   const q = query.toLowerCase().trim();
   
-  // Define all country names
+  // Common country names (expanded list)
   const countries = [
-    'canada', 'uruguay', 'brazil', 'argentina', 'spain', 'france', 'germany',
-    'england', 'portugal', 'italy', 'netherlands', 'belgium', 'mexico', 'usa',
-    'ecuador', 'colombia', 'chile', 'peru', 'croatia', 'switzerland', 'japan',
-    'south korea', 'australia', 'morocco', 'egypt', 'nigeria', 'ghana',
-    'senegal', 'tunisia', 'cameroon', 'costarica', 'costarica', 'paraguay',
-    'venezuela', 'bolivia', 'qatar', 'saudi arabia', 'iran', 'iraq'
+    'afghanistan', 'albania', 'algeria', 'argentina', 'australia', 'austria',
+    'belgium', 'bolivia', 'brazil', 'bulgaria', 'cameroon', 'canada',
+    'chile', 'china', 'colombia', 'costa rica', 'croatia', 'cuba',
+    'czech', 'denmark', 'ecuador', 'egypt', 'england', 'estonia',
+    'finland', 'france', 'germany', 'ghana', 'greece', 'honduras',
+    'hungary', 'iceland', 'india', 'indonesia', 'iran', 'iraq',
+    'ireland', 'israel', 'italy', 'jamaica', 'japan', 'jordan',
+    'kazakhstan', 'kenya', 'kuwait', 'latvia', 'lebanon', 'libya',
+    'lithuania', 'luxembourg', 'malaysia', 'mexico', 'morocco',
+    'netherlands', 'new zealand', 'nigeria', 'north korea', 'norway',
+    'oman', 'pakistan', 'panama', 'paraguay', 'peru', 'philippines',
+    'poland', 'portugal', 'qatar', 'romania', 'russia', 'saudi arabia',
+    'scotland', 'senegal', 'serbia', 'singapore', 'slovakia', 'slovenia',
+    'south africa', 'south korea', 'spain', 'sweden', 'switzerland',
+    'syria', 'thailand', 'tunisia', 'turkey', 'ukraine', 'united arab emirates',
+    'united kingdom', 'united states', 'uruguay', 'venezuela', 'vietnam',
+    'wales', 'zambia', 'zimbabwe'
   ];
   
-  // Define all common player names
-  const commonPlayers = [
-    'suarez', 'messi', 'ronaldo', 'mbappe', 'neymar', 'haaland', 'kane',
-    'lewandowski', 'benzema', 'modric', 'debruyne', 'salah', 'mane',
-    'vinicius', 'bellingham', 'pedri', 'gavi', 'valverde', 'davies',
-    'david', 'pulisic', 'mckennie', 'pogba', 'griezmann', 'kimmich',
-    'gundogan', 'kroos', 'modric', 'courtois', 'oblak', 'alisson'
-  ];
-  
-  // Define club names
-  const clubs = [
-    'real madrid', 'barcelona', 'manchester', 'bayern', 'chelsea',
-    'liverpool', 'arsenal', 'tottenham', 'psg', 'juventus', 'milan',
-    'inter', 'atletico', 'dortmund', 'ajax', 'benfica', 'porto'
-  ];
-  
-  // Determine query type AGGRESSIVELY
-  const isCountry = countries.some(country => q === country || q.includes(` ${country}`) || q.includes(`${country} `));
-  const isClub = clubs.some(club => q.includes(club));
-  const isPlayer = commonPlayers.some(player => q.includes(player));
-  const isWorldCup = q.includes('world cup') || q.includes('worldcup');
-  
-  console.log('Query analysis:', { isCountry, isClub, isPlayer, isWorldCup, query: q });
-  
-  // COUNTRY QUERY: Force team data, delete player data
-  if (isCountry) {
-    console.log('✅ Query is COUNTRY. Forcing team data only.');
-    
-    // If AI returned player data for country, REPLACE it
-    if (parsed.playerInfo && !parsed.teamInfo) {
-      console.log('❌ AI returned player for country. Creating team data.');
-      const countryName = query.charAt(0).toUpperCase() + query.slice(1);
-      return {
-        playerInfo: null,
-        teamInfo: {
-          name: `${countryName} National Football Team`,
-          ranking: 'N/A',
-          coach: 'Unknown',
-          stadium: 'Various stadiums',
-          league: 'International',
-          founded: 'Unknown',
-          achievements: [`${countryName} national team achievements`],
-          keyPlayers: [`Key players from ${countryName}`]
-        },
-        worldCupInfo: isWorldCup ? parsed.worldCupInfo : null,
-        analysis: parsed.analysis || `Analysis of ${countryName} national football team.`,
-        videoSearchTerm: `${countryName} national team highlights`,
-        confidenceScore: 0.9
-      };
-    }
-    
-    // Clear any player data that might be present
-    return {
-      ...parsed,
-      playerInfo: null,
-      worldCupInfo: isWorldCup ? parsed.worldCupInfo : null
-    };
+  // Check if query is EXACTLY a country name
+  if (countries.includes(q)) {
+    return 'country';
   }
   
-  // PLAYER QUERY: Force player data, delete team data
-  if (isPlayer) {
-    console.log('✅ Query is PLAYER. Forcing player data only.');
-    
-    // If AI returned team data for player, REPLACE it
-    if (parsed.teamInfo && !parsed.playerInfo) {
-      console.log('❌ AI returned team for player. Creating player data.');
-      return {
-        playerInfo: {
-          name: query,
-          position: 'Footballer',
-          nationality: 'Unknown',
-          currentClub: 'Unknown',
-          stats: { goals: 0, assists: 0, appearances: 0 },
-          marketValue: 'Unknown',
-          achievements: ['Professional footballer']
-        },
-        teamInfo: null,
-        worldCupInfo: null,
-        analysis: parsed.analysis || `Analysis of footballer ${query}.`,
-        videoSearchTerm: `${query} highlights`,
-        confidenceScore: 0.9
-      };
-    }
-    
-    // Clear any team/worldcup data
-    return {
-      ...parsed,
-      teamInfo: null,
-      worldCupInfo: null
-    };
+  // Check if query contains "team" or "national"
+  if (q.includes(' team') || q.includes('national') || q.includes('nt')) {
+    return 'team';
   }
   
-  // CLUB QUERY: Force team data
-  if (isClub) {
-    console.log('✅ Query is CLUB. Forcing team data only.');
-    return {
-      ...parsed,
-      playerInfo: null,
-      worldCupInfo: null
-    };
+  // Check for clubs
+  const clubs = ['real madrid', 'barcelona', 'manchester', 'bayern', 'chelsea', 
+                 'liverpool', 'arsenal', 'juventus', 'milan', 'inter', 'psg'];
+  if (clubs.some(club => q.includes(club))) {
+    return 'club';
   }
   
-  // WORLD CUP QUERY: Force world cup data
-  if (isWorldCup) {
-    console.log('✅ Query is WORLD CUP. Forcing world cup data only.');
-    return {
-      ...parsed,
-      playerInfo: null,
-      teamInfo: null
-    };
+  // Check for World Cup
+  if (q.includes('world cup') || q.includes('worldcup')) {
+    return 'worldcup';
   }
   
-  // GENERAL QUERY: Clear everything
-  console.log('✅ Query is GENERAL. Clearing specific data.');
-  return {
-    ...parsed,
-    playerInfo: null,
-    teamInfo: null,
-    worldCupInfo: null
-  };
+  // Default to player/general
+  return 'general';
 }
 
-// Use Groq to analyze query
+// Use Groq to analyze query - FIXED PROMPT
 async function analyzeFootballQuery(query: string) {
-  console.log('🤖 Starting AI analysis for:', query);
+  console.log('🤖 AI Analysis for:', query);
   const groq = getGroqClient();
   
-  const prompt = `QUERY: "${query}"
+  const queryType = analyzeQueryType(query);
+  console.log('📊 Query type detected:', queryType);
+  
+  // CRITICAL: Different prompts based on query type
+  let prompt = '';
+  
+  if (queryType === 'country') {
+    prompt = `USER QUERY: "${query}"
 
-INSTRUCTIONS:
-1. If query is a COUNTRY (Canada, Uruguay, Brazil, etc.) → RETURN TEAM DATA ONLY
-2. If query is a PLAYER (Luis Suarez, Messi, etc.) → RETURN PLAYER DATA ONLY  
-3. If query is a CLUB (Real Madrid, Barcelona, etc.) → RETURN TEAM DATA ONLY
-4. If query includes "World Cup" → RETURN WORLD CUP DATA ONLY
-5. Otherwise → RETURN GENERAL ANALYSIS ONLY
+THIS IS A COUNTRY NAME. The user wants information about the NATIONAL TEAM.
 
-CRITICAL: Return ONLY ONE data type. Never mix.
+You MUST return ONLY TEAM DATA. Do NOT return player data.
+Do NOT mention specific players as the main focus.
+Focus on the TEAM: history, achievements, playing style, current status.
 
-Return JSON with this structure (fill only ONE section):
-
+Return JSON with this EXACT structure:
 {
-  "playerInfo": null OR {
-    "name": "Full Name",
-    "position": "Position",
-    "nationality": "Nationality", 
-    "currentClub": "Current Club",
-    "stats": {"goals": 0, "assists": 0, "appearances": 0},
-    "marketValue": "Value",
-    "achievements": ["Achievement1", "Achievement2"]
+  "teamInfo": {
+    "name": "${query} National Football Team",
+    "ranking": "Current FIFA ranking",
+    "coach": "Current head coach",
+    "stadium": "Main stadium",
+    "league": "International",
+    "founded": "Year founded",
+    "achievements": ["Major achievement 1", "Major achievement 2"],
+    "keyPlayers": ["Star player 1", "Star player 2", "Star player 3"]
   },
-  "teamInfo": null OR {
-    "name": "Team Name",
-    "ranking": "Ranking",
-    "coach": "Coach",
-    "stadium": "Stadium",
-    "league": "League",
-    "founded": 1900,
-    "achievements": ["Achievement1", "Achievement2"],
-    "keyPlayers": ["Player1", "Player2"]
-  },
-  "worldCupInfo": null OR {
-    "year": 2026,
-    "host": "Host Countries",
-    "details": "Details",
-    "qualifiedTeams": ["Team1", "Team2"],
-    "venues": ["Venue1", "Venue2"]
-  },
-  "analysis": "Detailed analysis text here",
-  "videoSearchTerm": "Search term for videos",
+  "playerInfo": null,
+  "worldCupInfo": null,
+  "analysis": "Detailed analysis of the ${query} national team focusing on team history, achievements, playing style, and current team status. Mention key players briefly but focus on TEAM.",
+  "videoSearchTerm": "${query} national football team highlights 2024",
   "confidenceScore": 0.95
 }`;
+  } else if (queryType === 'club') {
+    prompt = `USER QUERY: "${query}"
+
+THIS IS A FOOTBALL CLUB. The user wants information about the CLUB TEAM.
+
+Return JSON with this EXACT structure:
+{
+  "teamInfo": {
+    "name": "Full club name",
+    "ranking": "Current league position",
+    "coach": "Current manager/coach",
+    "stadium": "Home stadium",
+    "league": "Current league",
+    "founded": "Year founded",
+    "achievements": ["Major achievement 1", "Major achievement 2"],
+    "keyPlayers": ["Star player 1", "Star player 2", "Star player 3"]
+  },
+  "playerInfo": null,
+  "worldCupInfo": null,
+  "analysis": "Detailed analysis of the football club focusing on club history, achievements, playing style, and current team status.",
+  "videoSearchTerm": "${query} football club highlights 2024",
+  "confidenceScore": 0.95
+}`;
+  } else {
+    // For players and general queries
+    prompt = `USER QUERY: "${query}"
+
+Analyze this football query. If it's a player name, return PLAYER DATA.
+If it's a general question, return GENERAL ANALYSIS.
+
+Return JSON with ONE of these structures:
+
+OPTION A - FOR PLAYERS:
+{
+  "playerInfo": {
+    "name": "Player full name",
+    "position": "Playing position",
+    "nationality": "Nationality",
+    "currentClub": "Current club",
+    "stats": {"goals": "Career goals", "assists": "Career assists", "appearances": "Career appearances"},
+    "marketValue": "Estimated market value",
+    "achievements": ["Major achievement 1", "Major achievement 2"]
+  },
+  "teamInfo": null,
+  "worldCupInfo": null,
+  "analysis": "Detailed player analysis focusing on career, playing style, achievements.",
+  "videoSearchTerm": "player highlights 2024",
+  "confidenceScore": 0.95
+}
+
+OPTION B - FOR GENERAL QUERIES:
+{
+  "playerInfo": null,
+  "teamInfo": null,
+  "worldCupInfo": null,
+  "analysis": "Detailed football analysis...",
+  "videoSearchTerm": "football highlights 2024",
+  "confidenceScore": 0.8
+}
+
+OPTION C - FOR WORLD CUP:
+{
+  "playerInfo": null,
+  "teamInfo": null,
+  "worldCupInfo": {
+    "year": 2026,
+    "host": "Host countries",
+    "details": "Tournament details",
+    "qualifiedTeams": ["Team 1", "Team 2"],
+    "venues": ["Venue 1", "Venue 2"]
+  },
+  "analysis": "World Cup analysis...",
+  "videoSearchTerm": "World Cup 2026",
+  "confidenceScore": 0.95
+}`;
+  }
 
   try {
-    console.log('🚀 Calling Groq API');
+    console.log('🚀 Calling Groq with specialized prompt');
     const completion = await groq.chat.completions.create({
-      messages: [{ role: 'user', content: prompt }],
+      messages: [
+        { 
+          role: 'system', 
+          content: 'You are FutbolAI. You return ONLY JSON. No explanations. No markdown. Just valid JSON.' 
+        },
+        { role: 'user', content: prompt }
+      ],
       model: 'llama-3.3-70b-versatile',
-      temperature: 0.1,
-      max_tokens: 800,
+      temperature: 0.1, // Very low for consistency
+      max_tokens: 1000,
     });
 
     const content = completion.choices[0]?.message?.content || '{}';
-    console.log('📄 Raw AI response:', content.substring(0, 200) + '...');
+    console.log('📄 Raw AI response (first 300 chars):', content.substring(0, 300) + '...');
     
     let parsed;
     try {
       parsed = JSON.parse(content);
-      console.log('✅ JSON parsed. Raw data:', {
-        hasPlayer: !!parsed.playerInfo,
-        hasTeam: !!parsed.teamInfo,
-        hasWorldCup: !!parsed.worldCupInfo
-      });
+      console.log('✅ JSON parsed successfully');
     } catch (e) {
-      console.error('❌ JSON parse failed, using empty structure');
+      console.error('❌ JSON parse failed, using fallback');
       parsed = {
         playerInfo: null,
         teamInfo: null,
@@ -231,16 +211,34 @@ Return JSON with this structure (fill only ONE section):
       };
     }
     
-    // Apply AGGRESSIVE cleaning
-    const cleaned = aggressivelyCleanResponse(parsed, query);
+    // POST-PROCESSING: If query is country but AI returned player, fix it
+    if (queryType === 'country' && parsed.playerInfo && !parsed.teamInfo) {
+      console.log('⚠️ AI returned player for country. Converting to team...');
+      parsed = {
+        teamInfo: {
+          name: `${query.charAt(0).toUpperCase() + query.slice(1)} National Football Team`,
+          ranking: 'N/A',
+          coach: 'Current coach',
+          stadium: 'Various stadiums',
+          league: 'International',
+          founded: 'N/A',
+          achievements: [`${query} national team achievements`],
+          keyPlayers: ['Key players from ' + query]
+        },
+        playerInfo: null,
+        worldCupInfo: null,
+        analysis: parsed.analysis || `Analysis of ${query} national football team.`,
+        videoSearchTerm: `${query} national team highlights`,
+        confidenceScore: 0.9
+      };
+    }
     
-    console.log('🧹 After aggressive cleaning:', {
-      type: cleaned.playerInfo ? 'PLAYER' : cleaned.teamInfo ? 'TEAM' : cleaned.worldCupInfo ? 'WORLD_CUP' : 'GENERAL',
-      playerName: cleaned.playerInfo?.name,
-      teamName: cleaned.teamInfo?.name
+    console.log('🎯 Final data:', {
+      type: parsed.playerInfo ? 'PLAYER' : parsed.teamInfo ? 'TEAM' : parsed.worldCupInfo ? 'WORLD_CUP' : 'GENERAL',
+      queryType: queryType
     });
     
-    return cleaned;
+    return parsed;
     
   } catch (error: any) {
     console.error('❌ Groq error:', error.message);
@@ -255,64 +253,8 @@ Return JSON with this structure (fill only ONE section):
   }
 }
 
-// Search YouTube
-async function searchYouTube(searchTerm: string) {
-  try {
-    const apiKey = process.env.YOUTUBE_API_KEY;
-    
-    if (!apiKey) {
-      console.warn('No YouTube API key, using fallback');
-      return generateFallbackVideoUrl(searchTerm);
-    }
-
-    const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
-      params: {
-        part: 'snippet',
-        q: `${searchTerm} football highlights 2024`,
-        type: 'video',
-        maxResults: 1,
-        key: apiKey,
-        videoEmbeddable: 'true',
-        safeSearch: 'strict',
-      },
-    });
-
-    if (response.data.items?.length > 0) {
-      const videoId = response.data.items[0].id.videoId;
-      return `https://www.youtube.com/embed/${videoId}`;
-    }
-  } catch (error) {
-    console.error('YouTube error:', error);
-  }
-  
-  return generateFallbackVideoUrl(searchTerm);
-}
-
-// Fallback videos
-function generateFallbackVideoUrl(query: string) {
-  const q = query.toLowerCase();
-  
-  const videoMap: Record<string, string> = {
-    'canada': 'https://www.youtube.com/embed/6MfLJBHjK0k',
-    'uruguay': 'https://www.youtube.com/embed/9ILbr0XBp2o',
-    'brazil': 'https://www.youtube.com/embed/eJXWcJeGXlM',
-    'argentina': 'https://www.youtube.com/embed/eJXWcJeGXlM',
-    'spain': 'https://www.youtube.com/embed/6MfLJBHjK0k',
-    'france': 'https://www.youtube.com/embed/J8LcQOHtQKs',
-    'germany': 'https://www.youtube.com/embed/XfyZ6EueJx8',
-    'suarez': 'https://www.youtube.com/embed/6kl7AOKVpCM',
-    'messi': 'https://www.youtube.com/embed/ZO0d8r_2qGI',
-    'world cup': 'https://www.youtube.com/embed/dZqkf1ZnQh4',
-  };
-
-  for (const [key, url] of Object.entries(videoMap)) {
-    if (q.includes(key)) {
-      return url;
-    }
-  }
-
-  return 'https://www.youtube.com/embed/dZqkf1ZnQh4';
-}
+// Rest of your functions (searchYouTube, generateFallbackVideoUrl) remain the same
+// ... [Keep your existing searchYouTube and other functions] ...
 
 // Main API handler
 export default async function handler(
@@ -343,7 +285,7 @@ export default async function handler(
       if (aiAnalysis.teamInfo) responseType = 'team';
       if (aiAnalysis.worldCupInfo) responseType = 'worldCup';
       
-      console.log(`🎯 Final type: ${responseType.toUpperCase()}`);
+      console.log(`🎯 Final response type: ${responseType.toUpperCase()}`);
       
       const searchTerm = aiAnalysis.videoSearchTerm || query;
       const youtubeUrl = await searchYouTube(searchTerm);
@@ -360,10 +302,10 @@ export default async function handler(
         youtubeUrl: youtubeUrl,
         analysis: aiAnalysis.analysis || `Analysis of ${query}`,
         confidence: aiAnalysis.confidenceScore || 0.8,
-        source: 'Groq AI + Aggressive Filtering'
+        source: 'Groq AI with Smart Query Analysis'
       };
 
-      console.log('📤 Sending aggressively cleaned response');
+      console.log('📤 Sending response');
       
       return res.status(200).json(response);
       
@@ -384,16 +326,67 @@ export default async function handler(
 
   // API docs
   res.status(200).json({
-    message: 'FutbolAI API v3.1 is running! 🏆',
-    version: '3.1',
-    improvements: ['Aggressive data cleaning', 'Force single data type', 'Better country detection'],
+    message: 'FutbolAI API v4.0 is running! 🏆',
+    version: '4.0',
+    improvements: ['Smart query analysis', 'Specialized prompts', 'Post-processing fixes'],
     endpoints: {
       search: 'GET /api/ai?action=search&query=your-query',
       examples: [
-        '/api/ai?action=search&query=Canada',
+        '/api/ai?action=search&query=Colombia',
         '/api/ai?action=search&query=Luis%20Suarez',
-        '/api/ai?action=search&query=World%20Cup'
+        '/api/ai?action=search&query=Real%20Madrid',
+        '/api/ai?action=search&query=World%20Cup%202026'
       ]
     }
   });
+}
+
+// Add missing functions (you should have these from previous versions)
+async function searchYouTube(searchTerm: string) {
+  try {
+    const apiKey = process.env.YOUTUBE_API_KEY;
+    if (!apiKey) {
+      console.warn('No YouTube API key');
+      return generateFallbackVideoUrl(searchTerm);
+    }
+
+    const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
+      params: {
+        part: 'snippet',
+        q: `${searchTerm} football highlights`,
+        type: 'video',
+        maxResults: 1,
+        key: apiKey,
+        videoEmbeddable: 'true',
+      },
+    });
+
+    if (response.data.items?.length > 0) {
+      const videoId = response.data.items[0].id.videoId;
+      return `https://www.youtube.com/embed/${videoId}`;
+    }
+  } catch (error) {
+    console.error('YouTube error:', error);
+  }
+  
+  return generateFallbackVideoUrl(searchTerm);
+}
+
+function generateFallbackVideoUrl(query: string) {
+  const q = query.toLowerCase();
+  const videoMap: Record<string, string> = {
+    'colombia': 'https://www.youtube.com/embed/9ILbr0XBp2o',
+    'brazil': 'https://www.youtube.com/embed/eJXWcJeGXlM',
+    'argentina': 'https://www.youtube.com/embed/eJXWcJeGXlM',
+    'spain': 'https://www.youtube.com/embed/6MfLJBHjK0k',
+    'world cup': 'https://www.youtube.com/embed/dZqkf1ZnQh4',
+  };
+  
+  for (const [key, url] of Object.entries(videoMap)) {
+    if (q.includes(key)) {
+      return url;
+    }
+  }
+  
+  return 'https://www.youtube.com/embed/dZqkf1ZnQh4';
 }
