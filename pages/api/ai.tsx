@@ -90,7 +90,7 @@ Return ONLY the JSON object, no other text.`;
     // Try with different model - mixtral is more reliable
     const completion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
-      model: 'mixtral-8x7b-32768', // More reliable than llama-3.3
+      model: 'llama-3.3-70b-versatile', // More reliable than llama-3.3
       temperature: 0.3,
       max_tokens: 500,
     });
