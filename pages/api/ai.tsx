@@ -87,7 +87,7 @@ Return ONLY the JSON object, no other text.`;
   try {
     console.log('🚀 Calling Groq API...');
     
-    // Try with different model - mixtral is more reliable
+    // Try with different model - lama-3.3-70b-versatile
     const completion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
       model: 'llama-3.3-70b-versatile', // More reliable than llama-3.3

@@ -14,7 +14,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Simple test request
     const completion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: 'Say "Hello World"' }],
-      model: 'mixtral-8x7b-32768',
+      model: 'lama-3.3-70b-versatile',
       temperature: 0.1,
       max_tokens: 10,
     });
@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       success: true,
       message: 'Groq API is working',
       response: response,
-      model: 'mixtral-8x7b-32768'
+      model: 'lama-3.3-70b-versatile'
     });
     
   } catch (error: any) {
