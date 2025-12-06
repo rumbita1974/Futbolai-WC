@@ -79,9 +79,17 @@ export default function FootballAI({
     const entity = player || team;
     const isNationalTeam = team?.type === 'national';
     
+    // FIXED: Determine title safely
+    let title = 'Football Analysis';
+    if (player?.name || team?.name) {
+      title = player?.name || team?.name;
+    } else if (worldCupInfo) {
+      title = worldCupInfo.year ? `World Cup ${worldCupInfo.year}` : 'World Cup';
+    }
+    
     return (
       <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
-        {/* Header */}
+        {/* Header - FIXED VERSION */}
         <div style={{ marginBottom: '2rem' }}>
           <h2 style={{ 
             fontSize: '2.5rem', 
@@ -90,11 +98,12 @@ export default function FootballAI({
             color: 'white',
             background: player ? 'linear-gradient(to right, #4ade80, #22d3ee)' : 
                       team ? 'linear-gradient(to right, #fbbf24, #f97316)' :
-                      'linear-gradient(to right, #3b82f6, #8b5cf6)',
+                      worldCupInfo ? 'linear-gradient(to right, #3b82f6, #8b5cf6)' :
+                      'linear-gradient(to right, #4ade80, #22d3ee)',
             WebkitBackgroundClip: 'text',
             WebkitTextFillColor: 'transparent',
           }}>
-            {entity?.name || worldCupInfo ? `World Cup ${worldCupInfo.year}` : 'Football Analysis'}
+            {title}
           </h2>
           
           {entity?.type === 'national' && (
@@ -161,9 +170,9 @@ export default function FootballAI({
           }}>
             {player && (
               <>
-                <InfoCard label="Position" value={player.position} color="#4ade80" />
-                <InfoCard label="Nationality" value={player.nationality} color="#22d3ee" />
-                <InfoCard label="Current Club" value={player.club} color="#fbbf24" />
+                <InfoCard label="Position" value={player.position || 'Unknown'} color="#4ade80" />
+                <InfoCard label="Nationality" value={player.nationality || 'Unknown'} color="#22d3ee" />
+                <InfoCard label="Current Club" value={player.club || 'Unknown'} color="#fbbf24" />
                 {player.marketValue && player.marketValue !== 'Unknown' && (
                   <InfoCard label="Market Value" value={player.marketValue} color="#8b5cf6" />
                 )}
@@ -179,8 +188,8 @@ export default function FootballAI({
                     color="#4ade80" 
                   />
                 )}
-                <InfoCard label={isNationalTeam ? "Coach" : "Manager"} value={team.coach} color="#22d3ee" />
-                <InfoCard label="Stadium" value={team.stadium} color="#fbbf24" />
+                <InfoCard label={isNationalTeam ? "Coach" : "Manager"} value={team.coach || 'Unknown'} color="#22d3ee" />
+                <InfoCard label="Stadium" value={team.stadium || 'Unknown'} color="#fbbf24" />
                 {team.stadiumCapacity && team.stadiumCapacity !== 'Unknown' && (
                   <InfoCard label="Capacity" value={team.stadiumCapacity} color="#8b5cf6" />
                 )}
@@ -391,7 +400,12 @@ export default function FootballAI({
             
             {/* National Team Specific */}
             {isNationalTeam && (
-              <>
+              <div style={{
+                display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gap: '1rem',
+                marginTop: '1.5rem',
+              }}>
                 {team.fifaCode && (
                   <InfoCard label="FIFA Code" value={team.fifaCode} color="#3b82f6" />
                 )}
@@ -407,16 +421,22 @@ export default function FootballAI({
                 {team.playingStyle && (
                   <InfoCard label="Playing Style" value={team.playingStyle} color="#f59e0b" />
                 )}
-              </>
+              </div>
             )}
           </>
         )}
         
-        {/* WORLD CUP INFO */}
+        {/* WORLD CUP INFO - FIXED VERSION */}
         {worldCupInfo && (
-          <Section title={`World Cup ${worldCupInfo.year}`} icon="🌍" animationDelay="0.3s">
+          <Section 
+            title={worldCupInfo.year ? `World Cup ${worldCupInfo.year}` : "World Cup"} 
+            icon="🌍" 
+            animationDelay="0.3s"
+          >
             <div style={{ display: 'grid', gap: '1.5rem' }}>
-              <InfoCard label="Host" value={worldCupInfo.host} color="#4ade80" />
+              {worldCupInfo.host && (
+                <InfoCard label="Host" value={worldCupInfo.host} color="#4ade80" />
+              )}
               {worldCupInfo.format && (
                 <InfoCard label="Format" value={worldCupInfo.format} color="#22d3ee" />
               )}
@@ -444,7 +464,7 @@ export default function FootballAI({
                           color: '#93c5fd',
                         }}
                       >
-                        {typeof team === 'string' ? team : team.country}
+                        {typeof team === 'string' ? team : team.country || team.name || 'Team'}
                       </span>
                     ))}
                     {worldCupInfo.qualifiedTeams.length > 12 && (

@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       success: true,
       message: 'Groq API is working',
       response: response,
-      model: 'lama-3.3-70b-versatile'
+      model: 'llama-3.3-70b-versatile'
     });
     
   } catch (error: any) {
