@@ -156,6 +156,30 @@ export default function FootballAI({
             }}>
               {analysis}
             </p>
+            
+            {/* Video Status Info */}
+            <div style={{
+              marginTop: '1rem',
+              padding: '0.75rem',
+              background: 'rgba(59, 130, 246, 0.1)',
+              borderRadius: '0.5rem',
+              border: '1px solid rgba(59, 130, 246, 0.2)',
+              fontSize: '0.875rem',
+              color: '#93c5fd',
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                <span>🎬</span>
+                <span>AI-selected video highlights available below</span>
+              </div>
+              <div style={{ 
+                marginTop: '0.5rem', 
+                fontSize: '0.75rem', 
+                color: '#cbd5e1',
+                fontStyle: 'italic'
+              }}>
+                Dynamically fetched from YouTube based on AI search
+              </div>
+            </div>
           </div>
         )}
         
