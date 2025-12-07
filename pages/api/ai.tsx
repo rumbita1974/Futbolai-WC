@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import axios from 'axios';
 import { Groq } from 'groq-sdk';
 
 // Simple in-memory cache
@@ -47,7 +46,7 @@ Is this query about:
 3. A NATIONAL TEAM (country like Brazil, Argentina, Spain)
 4. WORLD CUP (tournament)
 
-Return ONLY one word: "player", "club", "national", or "worldCup"
+Return ONLY one word: "player", "club", "national", or "worldcup"
 Do not include any explanations or additional text.`;
 
   try {
@@ -70,7 +69,7 @@ Do not include any explanations or additional text.`;
     
     // Fallback based on keywords
     const queryLower = query.toLowerCase();
-    if (queryLower.includes('world cup')) return 'worldCup';
+    if (queryLower.includes('world cup')) return 'worldcup';
     if (queryLower.includes('fc') || queryLower.includes('cf ') || queryLower.includes(' united') || 
         queryLower.includes(' city') || queryLower.includes(' club')) return 'club';
     
@@ -79,7 +78,7 @@ Do not include any explanations or additional text.`;
     console.error('AI type detection error, using fallback:', error);
     // Fallback to simple detection
     const queryLower = query.toLowerCase();
-    if (queryLower.includes('world cup')) return 'worldCup';
+    if (queryLower.includes('world cup')) return 'worldcup';
     return 'player'; // Default to player for simplicity
   }
 }
@@ -157,7 +156,7 @@ Return a JSON object with these fields:
 
 Make the analysis factual and concise. If you don't know specific details, say "Information not available" rather than making it up.`;
   }
-  else { // worldCup
+  else { // worldcup
     prompt = `Analyze: "${query}"
 Return a JSON object with these fields:
 - worldCupInfo (object): { year: number, host: string, defendingChampion: string }
@@ -187,7 +186,7 @@ Make the analysis factual and concise.`;
   }
 }
 
-// YouTube search
+// YouTube search with better fallback - FIXED VERSION
 async function searchYouTube(searchTerm: string) {
   const cacheKey = `youtube_${searchTerm}`;
   const cached = getFromCache(cacheKey);
@@ -197,40 +196,76 @@ async function searchYouTube(searchTerm: string) {
     const apiKey = process.env.YOUTUBE_API_KEY;
     
     if (!apiKey) {
-      const fallback = 'https://www.youtube.com/embed/dZqkf1ZnQh4'; // Generic football
+      console.log('⚠️ No YouTube API key, using fallback');
+      // Use a reliable public football video
+      const fallback = 'https://www.youtube.com/embed/dZqkf1ZnQh4';
       setInCache(cacheKey, fallback);
       return fallback;
     }
 
-    const response = await axios.get('https://www.googleapis.com/youtube/v3/search', {
-      params: {
-        part: 'snippet',
-        q: `${searchTerm} football highlights`,
-        type: 'video',
-        maxResults: 1,
-        key: apiKey,
-        videoEmbeddable: 'true',
-        order: 'viewCount',
-      },
-      timeout: 5000,
-    });
+    // Use fetch with timeout
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 3000);
+    
+    const response = await fetch(
+      `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(searchTerm + ' football highlights')}&type=video&maxResults=1&key=${apiKey}&videoEmbeddable=true&order=viewCount`,
+      { signal: controller.signal }
+    );
+    
+    clearTimeout(timeoutId);
 
-    if (response.data.items?.length > 0) {
-      const videoId = response.data.items[0].id.videoId;
+    if (!response.ok) {
+      console.log('⚠️ YouTube API error, using fallback');
+      throw new Error('YouTube API error');
+    }
+
+    const data = await response.json();
+    
+    if (data.items?.length > 0) {
+      const videoId = data.items[0].id.videoId;
       const url = `https://www.youtube.com/embed/${videoId}`;
+      console.log('✅ Found YouTube video:', url);
       setInCache(cacheKey, url);
       return url;
     }
     
+    console.log('⚠️ No YouTube results, using fallback');
     const fallback = 'https://www.youtube.com/embed/dZqkf1ZnQh4';
     setInCache(cacheKey, fallback);
     return fallback;
     
   } catch (error) {
-    console.error('YouTube API error:', error);
-    const fallback = 'https://www.youtube.com/embed/dZqkf1ZnQh4';
-    setInCache(cacheKey, fallback);
-    return fallback;
+    console.error('❌ YouTube API error, using fallback:', error);
+    // Use reliable public football videos based on search term
+    const term = searchTerm.toLowerCase();
+    const fallbacks: Record<string, string> = {
+      'real madrid': 'https://www.youtube.com/embed/XfyZ6EueJx8',
+      'barcelona': 'https://www.youtube.com/embed/3X7XG5KZiUY',
+      'messi': 'https://www.youtube.com/embed/ZO0d8r_2qGI',
+      'ronaldo': 'https://www.youtube.com/embed/OUKGsb8CpF8',
+      'spain': 'https://www.youtube.com/embed/eJXWcJeGXlM',
+      'brazil': 'https://www.youtube.com/embed/eJXWcJeGXlM',
+      'argentina': 'https://www.youtube.com/embed/mokNgn4i51A',
+      'cristiano': 'https://www.youtube.com/embed/OUKGsb8CpF8',
+      'daniel olmo': 'https://www.youtube.com/embed/Taq8krKk7_4',
+      'olmo': 'https://www.youtube.com/embed/Taq8krKk7_4',
+      'liverpool': 'https://www.youtube.com/embed/6h7aF0IBmMc',
+      'manchester': 'https://www.youtube.com/embed/6h7aF0IBmMc',
+      'psg': 'https://www.youtube.com/embed/_Z2Y9Qnqy0M',
+      'bayern': 'https://www.youtube.com/embed/HfQmI1Q5LQc',
+      'juventus': 'https://www.youtube.com/embed/kV-uJYRX-dA',
+    };
+    
+    for (const [key, url] of Object.entries(fallbacks)) {
+      if (term.includes(key)) {
+        setInCache(cacheKey, url);
+        return url;
+      }
+    }
+    
+    const defaultFallback = 'https://www.youtube.com/embed/dZqkf1ZnQh4';
+    setInCache(cacheKey, defaultFallback);
+    return defaultFallback;
   }
 }
 

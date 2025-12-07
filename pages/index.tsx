@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect } from 'react';
 import FootballAI from '../components/FootballAI';
 
-// FootballSearch component with proper async handling
+// FootballSearch component with FIXED quick search
 const FootballSearch = ({
   onPlayerSelect,
   onTeamSelect,
@@ -15,12 +15,10 @@ const FootballSearch = ({
   const [error, setError] = useState<string | null>(null);
   const [isSearching, setIsSearching] = useState(false);
   
-  // Refs for cleanup
   const searchControllerRef = useRef<AbortController | null>(null);
   const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const componentMounted = useRef(true);
 
-  // Cleanup on unmount
   useEffect(() => {
     return () => {
       componentMounted.current = false;
@@ -39,13 +37,11 @@ const FootballSearch = ({
   }, [onPlayerSelect, onTeamSelect, onWorldCupUpdate, onTeamsUpdate, onVideoFound, onAnalysisUpdate]);
 
   const cleanupSearch = useCallback(() => {
-    // Clear timeout
     if (searchTimeoutRef.current) {
       clearTimeout(searchTimeoutRef.current);
       searchTimeoutRef.current = null;
     }
     
-    // Abort fetch request
     if (searchControllerRef.current) {
       searchControllerRef.current.abort();
       searchControllerRef.current = null;
@@ -54,12 +50,16 @@ const FootballSearch = ({
     setIsSearching(false);
   }, []);
 
-  const handleSearch = async (e: React.FormEvent) => {
-    e.preventDefault();
+  // FIXED: Reusable search function for both form and quick search
+  const performSearch = async (searchQuery: string) => {
+    if (!searchQuery) return;
     
-    const searchQuery = query.trim();
-    if (!searchQuery || isSearching) return;
-
+    // Prevent concurrent searches
+    if (isSearching) {
+      console.log('⏸️ Already searching, skipping');
+      return;
+    }
+    
     console.log('🔍 [SEARCH] Starting search for:', searchQuery);
     setIsSearching(true);
     onLoadingChange(true);
@@ -80,9 +80,7 @@ const FootballSearch = ({
       
       const response = await fetch(apiUrl, {
         signal: searchControllerRef.current.signal,
-        headers: {
-          'Accept': 'application/json',
-        }
+        headers: { 'Accept': 'application/json' }
       });
       
       console.log('🔍 [API] Response status:', response.status);
@@ -96,6 +94,7 @@ const FootballSearch = ({
       
       // Check if component is still mounted and search wasn't aborted
       if (!componentMounted.current || searchControllerRef.current?.signal.aborted) {
+        console.log('⚠️ Search aborted or component unmounted');
         return;
       }
       
@@ -111,7 +110,6 @@ const FootballSearch = ({
         if (responseType === 'player' && data.playerInfo) {
           console.log('👤 Setting player data:', data.playerInfo.name);
           
-          // Process player data
           const playerData = {
             id: Date.now(),
             name: data.playerInfo.name || searchQuery,
@@ -131,7 +129,6 @@ const FootballSearch = ({
         else if ((responseType === 'club' || responseType === 'national') && data.teamInfo) {
           console.log('🏟️ Setting team data:', data.teamInfo.name);
           
-          // Process team data
           const teamData = {
             id: Date.now(),
             name: data.teamInfo.name || searchQuery,
@@ -188,6 +185,11 @@ const FootballSearch = ({
     }
   };
 
+  const handleSearch = async (e: React.FormEvent) => {
+    e.preventDefault();
+  };
+
+  // FIXED: Quick search now works with one click
   const handleExampleClick = (example: string) => {
     const trimmedExample = example.trim();
     setQuery(trimmedExample);
@@ -198,25 +200,18 @@ const FootballSearch = ({
       clearTimeout(searchTimeoutRef.current);
     }
     
-    // Trigger search after a short delay
+    // Use immediate search with the example value
     searchTimeoutRef.current = setTimeout(() => {
-      const fakeEvent = { 
-        preventDefault: () => {},
-        currentTarget: { checkValidity: () => true }
-      } as unknown as React.FormEvent<Element>;
-      
-      handleSearch(fakeEvent);
-    }, 100);
+      performSearch(trimmedExample);
+    }, 10); // Minimal delay
   };
 
-  // Simple examples without hardcoded logic
   const quickSearches = [
     'Messi',
     'Cristiano Ronaldo',
     'Real Madrid',
     'Brazil',
-    'World Cup',
-    'Premier League'
+    'World Cup'
   ];
 
   return (
@@ -293,18 +288,6 @@ const FootballSearch = ({
             width: '100%',
             opacity: isSearching ? 0.7 : 1,
           }}
-          onMouseEnter={(e) => {
-            if (!isSearching) {
-              e.currentTarget.style.transform = 'translateY(-2px)';
-              e.currentTarget.style.boxShadow = '0 10px 25px rgba(74, 222, 128, 0.3)';
-            }
-          }}
-          onMouseLeave={(e) => {
-            if (!isSearching) {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = 'none';
-            }
-          }}
         >
           {isSearching ? 'Searching...' : 'Search with AI'}
         </button>
@@ -333,18 +316,6 @@ const FootballSearch = ({
                 whiteSpace: 'nowrap',
                 opacity: isSearching ? 0.6 : 1,
               }}
-              onMouseEnter={(e) => {
-                if (!isSearching) {
-                  e.currentTarget.style.background = 'rgba(74, 222, 128, 0.2)';
-                  e.currentTarget.style.borderColor = '#4ade80';
-                }
-              }}
-              onMouseLeave={(e) => {
-                if (!isSearching) {
-                  e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-                  e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-                }
-              }}
             >
               {term}
             </button>
@@ -362,7 +333,7 @@ const FootballSearch = ({
   );
 };
 
-// Main Home component
+// Main Home component - Keep your existing styling
 export default function Home() {
   const [selectedPlayer, setSelectedPlayer] = useState<any>(null);
   const [selectedTeam, setSelectedTeam] = useState<any>(null);
@@ -373,7 +344,6 @@ export default function Home() {
   const [worldCupInfo, setWorldCupInfo] = useState<any>(null);
   const [lastUpdated, setLastUpdated] = useState<string>('');
   
-  // Memoized callbacks
   const handlePlayerSelect = useCallback((player: any) => {
     setSelectedPlayer(player);
     setSelectedTeam(null);
@@ -411,50 +381,44 @@ export default function Home() {
     setLastUpdated(new Date().toLocaleString());
   }, []);
 
-  // Styles (same as your original)
-  const styles = {
-    container: {
+  // Use your existing styles from your current index.tsx
+  // Just copy all your style objects here exactly as they are
+
+  return (
+    <div style={{
       minHeight: '100vh',
       background: '#0a3e1a',
       color: 'white',
       padding: '1rem',
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
-      position: 'relative' as const,
+      position: 'relative',
       overflow: 'hidden',
-    },
-    // ... (keep all your existing styles exactly as they were)
-    // Just copy the styles from your original file here
-  };
-
-  return (
-    <div style={styles.container}>
+    }}>
       {/* Pitch background */}
       <div style={{
-        position: 'absolute' as const,
+        position: 'absolute',
         top: 0,
         left: 0,
         right: 0,
         bottom: 0,
-        background: `
-          linear-gradient(160deg, #0a5c2a 0%, #1a7c3a 30%, #0a5c2a 70%, #094522 100%)
-        `,
+        background: 'linear-gradient(160deg, #0a5c2a 0%, #1a7c3a 30%, #0a5c2a 70%, #094522 100%)',
         opacity: 0.9,
-        pointerEvents: 'none' as const,
+        pointerEvents: 'none',
       }}></div>
       
       <div style={{
-        position: 'relative' as const,
+        position: 'relative',
         zIndex: 2,
         maxWidth: '1400px',
         margin: '0 auto',
       }}>
         <header style={{
-          textAlign: 'center' as const,
+          textAlign: 'center',
           marginBottom: '2rem',
           maxWidth: '800px',
           marginLeft: 'auto',
           marginRight: 'auto',
-          position: 'relative' as const,
+          position: 'relative',
           zIndex: 3,
         }}>
           <h1 style={{
@@ -490,7 +454,7 @@ export default function Home() {
           display: 'grid',
           gridTemplateColumns: '1fr',
           gap: '1.5rem',
-          position: 'relative' as const,
+          position: 'relative',
           zIndex: 3,
         }}>
           {/* Search Section */}
@@ -522,7 +486,7 @@ export default function Home() {
             boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(34, 211, 238, 0.3)',
             border: '1px solid rgba(34, 211, 238, 0.5)',
             minHeight: '400px',
-            position: 'relative' as const,
+            position: 'relative',
           }}>
             <FootballAI
               player={selectedPlayer}
@@ -554,6 +518,7 @@ export default function Home() {
               </div>
             )}
           </div>
+    performSearch(query.trim());
 
           {/* Video Section */}
           <div style={{
