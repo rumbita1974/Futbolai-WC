@@ -74,335 +74,181 @@ function getCurrentDateContext() {
   return `${month} ${year}`;
 }
 
-// Enhanced prompt with detailed trophy categories
+// SIMPLIFIED and more reliable prompt
 async function analyzeFootballQuery(query: string) {
   console.log('🤖 Starting AI analysis for:', query);
   const groq = getGroqClient();
   
   const currentDate = getCurrentDateContext();
   
-  const prompt = `You are FutbolAI, an expert football analyst with comprehensive knowledge. Current date: ${currentDate}.
+  // Determine query type for the prompt
+  const queryLower = query.toLowerCase();
+  let queryTypeHint = '';
+  
+  if (queryLower.includes('world cup')) {
+    queryTypeHint = 'WORLD CUP - Use format 4';
+  } else if (
+    queryLower.includes('national team') ||
+    ['spain', 'brazil', 'argentina', 'france', 'germany', 'italy', 'england', 'portugal', 'netherlands', 'belgium'].some(country => queryLower.includes(country))
+  ) {
+    queryTypeHint = 'NATIONAL TEAM - Use format 3';
+  } else if (
+    queryLower.includes('real madrid') || queryLower.includes('barcelona') || 
+    queryLower.includes('manchester') || queryLower.includes('bayern') ||
+    queryLower.includes('psg') || queryLower.includes('juventus') ||
+    queryLower.includes('chelsea') || queryLower.includes('arsenal') ||
+    queryLower.includes('liverpool') || queryLower.includes('ac milan') ||
+    queryLower.includes('inter milan')
+  ) {
+    queryTypeHint = 'CLUB TEAM - Use format 2';
+  } else {
+    queryTypeHint = 'PLAYER - Use format 1';
+  }
+  
+  const prompt = `You are FutbolAI, an expert football analyst with data up to ${currentDate}.
 
-Analyze: "${query}"
+Analyze this query: "${query}"
 
-Return ONLY JSON in this structure:
+${queryTypeHint}
 
-FOR PLAYERS:
+Return ONLY valid JSON in one of these exact formats:
+
+FORMAT 1 - FOR PLAYERS:
 {
   "playerInfo": {
     "name": "Full name",
-    "fullName": "Complete name",
-    "dateOfBirth": "YYYY-MM-DD",
-    "age": "Current age",
-    "nationality": "Nationality",
-    "height": "Height in cm",
-    "weight": "Weight in kg",
-    "preferredFoot": "Left/Right/Both",
-    
     "position": "Primary position",
-    "positions": ["Primary", "Secondary positions"],
-    "playingStyle": "Description of playing style",
-    
+    "nationality": "Country",
     "currentClub": "Current club",
-    "clubNumber": "Squad number",
-    "marketValue": "Estimated value with currency",
-    
+    "age": "Current age",
+    "height": "Height in cm",
+    "preferredFoot": "Left/Right/Both",
+    "marketValue": "Estimated value",
     "careerStats": {
-      "club": {
-        "totalGoals": "Number",
-        "totalAssists": "Number", 
-        "totalAppearances": "Number",
-        "goalsPerMatch": "Ratio"
-      },
-      "international": {
-        "caps": "Number of appearances",
-        "goals": "Number of goals",
-        "debut": "Date of international debut"
-      }
+      "club": {"totalGoals": 0, "totalAssists": 0, "totalAppearances": 0},
+      "international": {"caps": 0, "goals": 0}
     },
-    
-    "clubCareer": [
-      {"club": "Club name", "period": "Years", "appearances": "Number", "goals": "Number"}
-    ],
-    
-    "internationalCareer": {
-      "nationalTeam": "Country",
-      "tournamentAppearances": [
-        {"tournament": "World Cup 2022", "apps": "Number", "goals": "Number"}
-      ]
-    },
-    
-    "individualAwards": ["Ballon d'Or (years)", "Other awards"],
-    
     "achievementsSummary": {
       "worldCupTitles": 0,
       "continentalTitles": 0,
       "clubContinentalTitles": 0,
-      "clubDomesticTitles": {
-        "leagues": 0,
-        "cups": 0
-      }
-    },
-    
-    "teamHonors": [
-      {"competition": "Champions League", "wins": "Number", "years": [2022, 2018]},
-      {"competition": "League Title", "wins": "Number", "years": [2023, 2022]}
-    ],
-    
-    "currentSeason": {
-      "clubAppearances": "Number",
-      "clubGoals": "Number",
-      "clubAssists": "Number"
+      "clubDomesticTitles": {"leagues": 0, "cups": 0}
     }
   },
   "teamInfo": null,
   "worldCupInfo": null,
-  "analysis": "CONCISE analysis (max 150 words) focusing on key achievements, current form, and playing style.",
-  "videoSearchTerm": "[Player Name] 2024 highlights goals skills recent matches",
+  "analysis": "Brief 100-word analysis focusing on key achievements and current status",
+  "videoSearchTerm": "[Player Name] football highlights 2024",
   "confidenceScore": 0.95
 }
 
-FOR CLUB TEAMS (like Real Madrid, Barcelona, Manchester City):
+FORMAT 2 - FOR CLUB TEAMS:
 {
   "playerInfo": null,
   "teamInfo": {
     "name": "Full club name",
-    "nicknames": ["Nicknames"],
     "type": "club",
-    "founded": "Year founded",
-    "location": {
-      "city": "City",
-      "country": "Country"
-    },
-    
-    "stadium": {
-      "name": "Stadium name",
-      "capacity": "Seating capacity",
-      "opened": "Year opened"
-    },
-    
-    "currentManager": {
-      "name": "Manager name (CURRENT - ${currentDate})",
-      "nationality": "Manager nationality",
-      "appointed": "Date appointed"
-    },
-    
+    "founded": "Year",
     "league": "Current league",
-    
+    "currentManager": {"name": "Current manager"},
+    "stadium": {"name": "Stadium name", "capacity": "Number"},
     "achievementsSummary": {
       "continentalTitles": 0,
       "internationalTitles": 0,
-      "domesticTitles": {
-        "leagues": 0,
-        "cups": 0
-      },
-      "specificTrophies": {
-        "championsLeague": 0,
-        "europaLeague": 0,
-        "clubWorldCup": 0,
-        "domesticLeague": 0,
-        "mainDomesticCup": 0
-      }
+      "domesticTitles": {"leagues": 0, "cups": 0}
     },
-    
     "trophies": {
       "continental": [
-        {"competition": "UEFA Champions League", "wins": "Exact number (e.g., 14)", "icon": "⭐"},
-        {"competition": "UEFA Europa League", "wins": "Exact number", "icon": "🌟"},
-        {"competition": "UEFA Super Cup", "wins": "Exact number", "icon": "⚽"}
+        {"competition": "UEFA Champions League", "wins": 0, "icon": "⭐"}
       ],
       "international": [
-        {"competition": "FIFA Club World Cup", "wins": "Exact number", "icon": "🌍"},
-        {"competition": "Intercontinental Cup", "wins": "Exact number", "icon": "🏅"}
+        {"competition": "FIFA Club World Cup", "wins": 0, "icon": "🌍"}
       ],
       "domestic": {
         "league": [
-          {"competition": "La Liga", "wins": "Exact number (e.g., 35)", "icon": "🥇"},
-          {"competition": "Premier League", "wins": "Exact number", "icon": "🥇"},
-          {"competition": "Bundesliga", "wins": "Exact number", "icon": "🥇"},
-          {"competition": "Serie A", "wins": "Exact number", "icon": "🥇"},
-          {"competition": "Ligue 1", "wins": "Exact number", "icon": "🥇"}
+          {"competition": "La Liga", "wins": 0, "icon": "🥇"}
         ],
         "cup": [
-          {"competition": "Copa del Rey", "wins": "Exact number (e.g., 20)", "icon": "🏆"},
-          {"competition": "FA Cup", "wins": "Exact number", "icon": "🏆"},
-          {"competition": "DFB-Pokal", "wins": "Exact number", "icon": "🏆"},
-          {"competition": "Coppa Italia", "wins": "Exact number", "icon": "🏆"},
-          {"competition": "Coupe de France", "wins": "Exact number", "icon": "🏆"},
-          {"competition": "Carabao Cup", "wins": "Exact number", "icon": "🥤"},
-          {"competition": "Supercopa de España", "wins": "Exact number", "icon": "🏅"},
-          {"competition": "Community Shield", "wins": "Exact number", "icon": "🛡️"}
+          {"competition": "Copa del Rey", "wins": 0, "icon": "🏆"}
         ]
       }
-    },
-    
-    "currentSquad": {
-      "keyPlayers": [
-        {"name": "Player name", "position": "Position", "nationality": "Country"}
-      ],
-      "captain": "Captain name"
-    },
-    
-    "mainRivalries": ["El Clásico (vs Barcelona)", "Other rivalries"],
-    "clubValue": "Estimated club value",
-    
-    "currentSeason": {
-      "leaguePosition": "Current position",
-      "matchesPlayed": "Number",
-      "wins": "Number",
-      "draws": "Number",
-      "losses": "Number"
     }
   },
   "worldCupInfo": null,
-  "analysis": "CONCISE analysis (max 150 words) focusing on trophy count, current season, and key players.",
-  "videoSearchTerm": "[Team Name] 2024 highlights goals recent matches full games",
+  "analysis": "Brief 100-word analysis focusing on trophy history and current season",
+  "videoSearchTerm": "[Team Name] football highlights 2024",
   "confidenceScore": 0.95
 }
 
-FOR NATIONAL TEAMS (like Spain, Brazil, Argentina):
+FORMAT 3 - FOR NATIONAL TEAMS:
 {
   "playerInfo": null,
   "teamInfo": {
     "name": "Country name",
-    "nicknames": ["La Roja", "Other nicknames"],
     "type": "national",
-    "fifaCode": "FIFA code",
-    "fifaRanking": "Current FIFA ranking position",
-    "confederation": "UEFA/CONMEBOL/etc",
-    
-    "currentCoach": {
-      "name": "Coach name (CURRENT - ${currentDate})",
-      "nationality": "Coach nationality",
-      "appointed": "Date appointed"
-    },
-    
-    "homeStadium": "Main home stadium",
-    
+    "fifaRanking": "Current ranking",
+    "currentCoach": {"name": "Current coach"},
     "achievementsSummary": {
       "worldCupTitles": 0,
       "continentalTitles": 0
     },
-    
     "majorHonors": [
-      {"competition": "FIFA World Cup", "titles": "Number of titles", "years": [2010, ...], "icon": "🏆"},
-      {"competition": "UEFA European Championship", "titles": "Number", "years": [2008, 2012], "icon": "🇪🇺"},
-      {"competition": "Copa América", "titles": "Number", "years": [...], "icon": "🇦🇷"},
-      {"competition": "CONCACAF Gold Cup", "titles": "Number", "years": [...], "icon": "🇺🇸"},
-      {"competition": "UEFA Nations League", "titles": "Number", "years": [...], "icon": "🏆"}
-    ],
-    
-    "records": {
-      "mostCaps": {"player": "Player name", "caps": "Number"},
-      "topScorer": {"player": "Player name", "goals": "Number"}
-    },
-    
-    "currentSquad": {
-      "captain": "Captain name",
-      "keyPlayers": [
-        {"name": "Player name", "position": "Position", "club": "Current club"}
-      ]
-    },
-    
-    "mainRivalries": ["vs Portugal", "vs France", "vs Italy"],
-    "playingStyle": "Traditional playing style description"
+      {"competition": "FIFA World Cup", "titles": 0, "icon": "🏆"}
+    ]
   },
   "worldCupInfo": null,
-  "analysis": "CONCISE analysis (max 150 words) focusing on World Cup and continental titles, current squad strength.",
-  "videoSearchTerm": "[Country Name] national team 2024 highlights matches goals",
+  "analysis": "Brief 100-word analysis focusing on World Cup and continental achievements",
+  "videoSearchTerm": "[Country] national team football 2024",
   "confidenceScore": 0.95
 }
 
-FOR WORLD CUP:
+FORMAT 4 - FOR WORLD CUP:
 {
   "playerInfo": null,
   "teamInfo": null,
   "worldCupInfo": {
     "year": 2026,
-    "edition": "23rd FIFA World Cup",
-    "host": "USA, Canada, Mexico",
-    "hostCities": ["List of host cities"],
-    "qualifiedTeams": ["USA", "Canada", "Mexico", "Argentina", "France", "Brazil"],
-    "venues": ["List stadiums"],
-    "defendingChampion": "Argentina",
-    "mostTitles": {"country": "Brazil", "titles": 5}
+    "host": "Host countries",
+    "defendingChampion": "Current champion"
   },
-  "analysis": "CONCISE analysis (max 150 words) of the upcoming World Cup including format, favorites, and key information.",
-  "videoSearchTerm": "World Cup 2026 highlights preview qualifiers",
+  "analysis": "Brief 100-word analysis of the upcoming tournament",
+  "videoSearchTerm": "World Cup 2026 football",
   "confidenceScore": 0.95
 }
 
-CRITICAL INSTRUCTIONS:
-1. ALWAYS include achievementsSummary with EXACT counts:
-   - National teams: worldCupTitles, continentalTitles
-   - Clubs: continentalTitles, internationalTitles, domesticTitles.leagues, domesticTitles.cups
-   - Calculate specificTrophies counts from trophies data
-
-2. Use EXACT numbers (e.g., "14" not "fourteen")
-
-3. For managers/coaches, use CURRENT information (${currentDate})
-
-4. Make analysis CONCISE (max 150 words)
-
-5. VideoSearchTerm must be specific and searchable
-
-6. For club trophies, include ALL relevant competitions based on the team's country/league
-
-7. Ensure data is up-to-date as of ${currentDate}
-
-8. Only include competitions the team has actually won (no zero counts)
-
-Return ONLY the JSON object, no other text.`;
+IMPORTANT:
+1. Use ONLY the format indicated by the query type
+2. Fill in ACCURATE, REAL data
+3. For trophies, use exact numbers (e.g., Real Madrid has 14 UCL titles)
+4. Return ONLY the JSON, no other text
+5. If unsure about a number, use 0`;
 
   try {
-    console.log('🚀 Calling Groq with enhanced prompt');
+    console.log('🚀 Calling Groq with query:', query);
+    console.log('💡 Query type hint:', queryTypeHint);
+    
     const completion = await groq.chat.completions.create({
       messages: [{ role: 'user', content: prompt }],
       model: 'llama-3.3-70b-versatile',
-      temperature: 0.3,
-      max_tokens: 2500,
+      temperature: 0.1,
+      max_tokens: 2000,
     });
 
     const content = completion.choices[0]?.message?.content || '{}';
-    console.log('📄 Raw AI response received');
+    console.log('📄 Raw AI response (first 300 chars):', content.substring(0, 300) + '...');
     
     const parsed = safeParseJSON(content);
-    
-    // Validate and ensure achievementsSummary exists
-    if (parsed.teamInfo && parsed.teamInfo.type === 'club' && !parsed.teamInfo.achievementsSummary) {
-      parsed.teamInfo.achievementsSummary = {
-        continentalTitles: 0,
-        internationalTitles: 0,
-        domesticTitles: { leagues: 0, cups: 0 },
-        specificTrophies: {
-          championsLeague: 0,
-          europaLeague: 0,
-          clubWorldCup: 0,
-          domesticLeague: 0,
-          mainDomesticCup: 0
-        }
-      };
-    }
-    
-    if (parsed.teamInfo && parsed.teamInfo.type === 'national' && !parsed.teamInfo.achievementsSummary) {
-      parsed.teamInfo.achievementsSummary = {
-        worldCupTitles: 0,
-        continentalTitles: 0
-      };
-    }
-    
-    if (parsed.playerInfo && !parsed.playerInfo.achievementsSummary) {
-      parsed.playerInfo.achievementsSummary = {
-        worldCupTitles: 0,
-        continentalTitles: 0,
-        clubContinentalTitles: 0,
-        clubDomesticTitles: { leagues: 0, cups: 0 }
-      };
-    }
+    console.log('✅ JSON parsed:', {
+      hasPlayerInfo: !!parsed.playerInfo,
+      hasTeamInfo: !!parsed.teamInfo,
+      hasWorldCupInfo: !!parsed.worldCupInfo,
+      teamType: parsed.teamInfo?.type,
+      analysisLength: parsed.analysis?.length || 0
+    });
     
     // Ensure required fields
     if (!parsed.analysis) {
-      parsed.analysis = `CONCISE analysis of ${query} focusing on key achievements and current status.`;
+      parsed.analysis = `Analysis of ${query}.`;
     }
     if (!parsed.videoSearchTerm) parsed.videoSearchTerm = `${query} football highlights 2024`;
     if (!parsed.confidenceScore) parsed.confidenceScore = 0.8;
@@ -564,11 +410,24 @@ export default async function handler(
     try {
       // Try AI analysis
       const aiAnalysis = await analyzeFootballQuery(query);
-      console.log('✅ AI Analysis completed, type:', 
-        aiAnalysis.playerInfo ? 'player' : 
-        aiAnalysis.teamInfo ? 'team' : 
-        aiAnalysis.worldCupInfo ? 'worldCup' : 'general'
-      );
+      
+      // Determine the type based on what data we have
+      let responseType = 'general';
+      if (aiAnalysis.playerInfo) {
+        responseType = 'player';
+      } else if (aiAnalysis.teamInfo) {
+        responseType = aiAnalysis.teamInfo.type === 'national' ? 'national' : 'club';
+      } else if (aiAnalysis.worldCupInfo) {
+        responseType = 'worldCup';
+      }
+      
+      console.log('✅ AI Analysis completed, type:', responseType);
+      console.log('📊 Data structure:', {
+        playerInfo: !!aiAnalysis.playerInfo,
+        teamInfo: !!aiAnalysis.teamInfo,
+        worldCupInfo: !!aiAnalysis.worldCupInfo,
+        teamType: aiAnalysis.teamInfo?.type
+      });
       
       const searchTerm = aiAnalysis.videoSearchTerm || query;
       console.log('🎯 YouTube search term:', searchTerm);
@@ -580,9 +439,7 @@ export default async function handler(
         success: true,
         query: query,
         timestamp: new Date().toISOString(),
-        type: aiAnalysis.playerInfo ? 'player' : 
-              aiAnalysis.teamInfo ? 'team' : 
-              aiAnalysis.worldCupInfo ? 'worldCup' : 'general',
+        type: responseType,
         data: aiAnalysis.playerInfo || aiAnalysis.teamInfo || aiAnalysis.worldCupInfo || null,
         playerInfo: aiAnalysis.playerInfo || null,
         teamInfo: aiAnalysis.teamInfo || null,
