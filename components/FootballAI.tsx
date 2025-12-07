@@ -9,7 +9,7 @@ interface FootballAIProps {
   worldCupInfo?: any;
 }
 
-// Add CSS for spinner animation - Moved to CSS-in-JS to avoid SSR issues
+// Add CSS for spinner animation
 const SPINNER_STYLES = `
   @keyframes spin {
     to { transform: rotate(360deg); }
@@ -29,7 +29,7 @@ export default function FootballAI({
   teams,
   worldCupInfo 
 }: FootballAIProps) {
-  // Add spinner styles safely - FIXED for SSR
+  // Add spinner styles safely for SSR - FIXED
   useEffect(() => {
     if (typeof window !== 'undefined' && typeof document !== 'undefined') {
       if (!document.querySelector('style[data-spinner]')) {
