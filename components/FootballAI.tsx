@@ -1,3 +1,12 @@
+useEffect(() => {
+  // This will help reset the component when new data comes in
+  console.log('🔄 FootballAI component updated with new data:', {
+    player: !!player,
+    team: !!team,
+    worldCupInfo: !!worldCupInfo
+  });
+}, [player, team, worldCupInfo]);
+
 import { useEffect } from 'react';
 
 interface FootballAIProps {

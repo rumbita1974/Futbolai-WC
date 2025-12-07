@@ -24,6 +24,17 @@ export default function FootballSearch({
   const [query, setQuery] = useState('');
   const [error, setError] = useState<string | null>(null);
 
+  // Function to clear ALL previous data
+  const clearAllPreviousData = () => {
+    console.log('🧹 Clearing all previous data...');
+    onPlayerSelect(null);
+    onTeamSelect(null);
+    onWorldCupUpdate(null);
+    onTeamsUpdate([]);
+    onVideoFound('');
+    onAnalysisUpdate('');
+  };
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!query.trim()) return;
@@ -32,16 +43,11 @@ export default function FootballSearch({
     onLoadingChange(true);
     setError(null);
     
-    // Clear previous selections
-    onPlayerSelect(null);
-    onTeamSelect(null);
-    onWorldCupUpdate(null);
-    onTeamsUpdate([]);
-    onVideoFound('');
-    onAnalysisUpdate('');
+    // Clear ALL previous selections
+    clearAllPreviousData();
     
     try {
-      const apiUrl = `/api/ai?action=search&query=${encodeURIComponent(query)}`;
+      const apiUrl = `/api/ai?action=search&query=${encodeURIComponent(query.trim())}`;
       console.log('🔍 [API] Calling:', apiUrl);
       
       const response = await fetch(apiUrl);
@@ -55,12 +61,16 @@ export default function FootballSearch({
         console.log('📊 Data received:', {
           playerInfo: !!data.playerInfo,
           teamInfo: !!data.teamInfo,
+          worldCupInfo: !!data.worldCupInfo,
           trophies: data.teamInfo?.trophies ? 'Yes' : 'No',
           achievementsSummary: data.playerInfo?.achievementsSummary || data.teamInfo?.achievementsSummary ? 'Yes' : 'No'
         });
         
         const responseType = data.type || 'general';
         console.log('🎯 Processing as type:', responseType);
+        
+        // Clear all data again before setting new data (just to be sure)
+        clearAllPreviousData();
         
         if (responseType === 'player' && data.playerInfo) {
           console.log('👤 Setting player data:', data.playerInfo.name);
@@ -154,6 +164,9 @@ export default function FootballSearch({
         } 
         else if (responseType === 'team' && data.teamInfo) {
           console.log('🏟️ Setting team data:', data.teamInfo.name);
+          
+          // Clear player data if switching from player to team
+          onPlayerSelect(null);
           
           // Process team achievements from achievementsSummary
           let teamAchievements = [];
@@ -296,6 +309,10 @@ export default function FootballSearch({
         else if (responseType === 'worldCup' && data.worldCupInfo) {
           console.log('🌍 Setting World Cup data');
           
+          // Clear player and team data if switching to World Cup
+          onPlayerSelect(null);
+          onTeamSelect(null);
+          
           const worldCupData = {
             year: data.worldCupInfo.year,
             edition: data.worldCupInfo.edition,
@@ -313,6 +330,10 @@ export default function FootballSearch({
         }
         else {
           console.log('📝 General query - only showing analysis');
+          // Clear all data for general queries
+          onPlayerSelect(null);
+          onTeamSelect(null);
+          onWorldCupUpdate(null);
         }
         
         // Update analysis
@@ -341,12 +362,19 @@ export default function FootballSearch({
   };
 
   const handleExampleClick = (example: string) => {
-    setQuery(example);
+    // Trim the example query to remove any trailing spaces
+    const trimmedExample = example.trim();
+    setQuery(trimmedExample);
     setError(null);
+    
+    // Use setTimeout to ensure state is updated before search
     setTimeout(() => {
-      const fakeEvent = { preventDefault: () => {} } as React.FormEvent;
+      const fakeEvent = { 
+        preventDefault: () => {},
+        currentTarget: { checkValidity: () => true }
+      } as React.FormEvent;
       handleSearch(fakeEvent);
-    }, 100);
+    }, 50);
   };
 
   const quickSearches = [
@@ -452,6 +480,7 @@ export default function FootballSearch({
           {quickSearches.map((term) => (
             <button
               key={term}
+              type="button"
               onClick={() => handleExampleClick(term)}
               style={{
                 padding: '0.5rem 1rem',
