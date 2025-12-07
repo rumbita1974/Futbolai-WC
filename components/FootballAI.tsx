@@ -60,7 +60,7 @@ export default function FootballAI({
         return (
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
             gap: '1rem',
             marginTop: '1rem'
           }}>
@@ -88,7 +88,7 @@ export default function FootballAI({
         return (
           <div style={{ 
             display: 'grid', 
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+            gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
             gap: '1rem',
             marginTop: '1rem'
           }}>
@@ -191,6 +191,173 @@ export default function FootballAI({
     return null;
   };
 
+  // Function to render detailed club trophies by category
+  const renderDetailedClubTrophies = (team: any) => {
+    if (!team || team.type !== 'club') return null;
+    
+    const hasTrophies = team.trophies || team.achievementsSummary?.specificTrophies;
+    if (!hasTrophies) return null;
+    
+    const { trophies, achievementsSummary } = team;
+    
+    return (
+      <div style={{ marginTop: '1.5rem' }}>
+        <h4 style={{ color: 'white', marginBottom: '1rem', fontSize: '1.25rem', fontWeight: 600 }}>Detailed Trophy Cabinet</h4>
+        
+        {/* Continental Trophies */}
+        {trophies?.continental && trophies.continental.length > 0 && (
+          <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ color: '#8b5cf6', fontSize: '0.875rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span>⭐</span>
+              <span>Continental Trophies</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem' }}>
+              {trophies.continental.map((trophy: any, index: number) => (
+                <div key={index} style={{
+                  padding: '0.75rem',
+                  background: 'rgba(139, 92, 246, 0.1)',
+                  borderRadius: '0.5rem',
+                  border: '1px solid rgba(139, 92, 246, 0.2)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                    <span>{trophy.icon || '🏆'}</span>
+                    <span style={{ color: 'white', fontWeight: 500, fontSize: '0.875rem' }}>{trophy.competition}</span>
+                  </div>
+                  <div style={{ color: '#a78bfa', fontWeight: 700, fontSize: '1.25rem' }}>{trophy.wins}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {/* International Trophies */}
+        {trophies?.international && trophies.international.length > 0 && (
+          <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ color: '#f59e0b', fontSize: '0.875rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span>🌎</span>
+              <span>International Trophies</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem' }}>
+              {trophies.international.map((trophy: any, index: number) => (
+                <div key={index} style={{
+                  padding: '0.75rem',
+                  background: 'rgba(245, 158, 11, 0.1)',
+                  borderRadius: '0.5rem',
+                  border: '1px solid rgba(245, 158, 11, 0.2)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                    <span>{trophy.icon || '🏆'}</span>
+                    <span style={{ color: 'white', fontWeight: 500, fontSize: '0.875rem' }}>{trophy.competition}</span>
+                  </div>
+                  <div style={{ color: '#fbbf24', fontWeight: 700, fontSize: '1.25rem' }}>{trophy.wins}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {/* Domestic League Trophies */}
+        {trophies?.domestic?.league && trophies.domestic.league.length > 0 && (
+          <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ color: '#4ade80', fontSize: '0.875rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span>🥇</span>
+              <span>Domestic League Titles</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem' }}>
+              {trophies.domestic.league.map((trophy: any, index: number) => (
+                <div key={index} style={{
+                  padding: '0.75rem',
+                  background: 'rgba(74, 222, 128, 0.1)',
+                  borderRadius: '0.5rem',
+                  border: '1px solid rgba(74, 222, 128, 0.2)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                    <span>{trophy.icon || '🥇'}</span>
+                    <span style={{ color: 'white', fontWeight: 500, fontSize: '0.875rem' }}>{trophy.competition}</span>
+                  </div>
+                  <div style={{ color: '#4ade80', fontWeight: 700, fontSize: '1.25rem' }}>{trophy.wins}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {/* Domestic Cup Trophies */}
+        {trophies?.domestic?.cup && trophies.domestic.cup.length > 0 && (
+          <div style={{ marginBottom: '1.5rem' }}>
+            <div style={{ color: '#22d3ee', fontSize: '0.875rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span>🏆</span>
+              <span>Domestic Cup Titles</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(180px, 1fr))', gap: '0.75rem' }}>
+              {trophies.domestic.cup.map((trophy: any, index: number) => (
+                <div key={index} style={{
+                  padding: '0.75rem',
+                  background: 'rgba(34, 211, 238, 0.1)',
+                  borderRadius: '0.5rem',
+                  border: '1px solid rgba(34, 211, 238, 0.2)',
+                }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
+                    <span>{trophy.icon || '🏆'}</span>
+                    <span style={{ color: 'white', fontWeight: 500, fontSize: '0.875rem' }}>{trophy.competition}</span>
+                  </div>
+                  <div style={{ color: '#22d3ee', fontWeight: 700, fontSize: '1.25rem' }}>{trophy.wins}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+        
+        {/* Specific Key Trophies (from achievementsSummary) */}
+        {achievementsSummary?.specificTrophies && (
+          <div style={{ marginTop: '1.5rem', padding: '1rem', background: 'rgba(255, 255, 255, 0.05)', borderRadius: '0.75rem' }}>
+            <div style={{ color: '#fbbf24', fontSize: '0.875rem', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span>🏅</span>
+              <span>Key Achievements</span>
+            </div>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '0.75rem' }}>
+              {achievementsSummary.specificTrophies.championsLeague > 0 && (
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.5rem' }}>⭐</div>
+                  <div style={{ color: 'white', fontSize: '0.875rem' }}>UEFA Champions League</div>
+                  <div style={{ color: '#8b5cf6', fontWeight: 700, fontSize: '1.25rem' }}>{achievementsSummary.specificTrophies.championsLeague}</div>
+                </div>
+              )}
+              {achievementsSummary.specificTrophies.europaLeague > 0 && (
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.5rem' }}>🌟</div>
+                  <div style={{ color: 'white', fontSize: '0.875rem' }}>UEFA Europa League</div>
+                  <div style={{ color: '#8b5cf6', fontWeight: 700, fontSize: '1.125rem' }}>{achievementsSummary.specificTrophies.europaLeague}</div>
+                </div>
+              )}
+              {achievementsSummary.specificTrophies.clubWorldCup > 0 && (
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.5rem' }}>🌍</div>
+                  <div style={{ color: 'white', fontSize: '0.875rem' }}>FIFA Club World Cup</div>
+                  <div style={{ color: '#f59e0b', fontWeight: 700, fontSize: '1.25rem' }}>{achievementsSummary.specificTrophies.clubWorldCup}</div>
+                </div>
+              )}
+              {achievementsSummary.specificTrophies.domesticLeague > 0 && (
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.5rem' }}>🥇</div>
+                  <div style={{ color: 'white', fontSize: '0.875rem' }}>Domestic League</div>
+                  <div style={{ color: '#4ade80', fontWeight: 700, fontSize: '1.25rem' }}>{achievementsSummary.specificTrophies.domesticLeague}</div>
+                </div>
+              )}
+              {achievementsSummary.specificTrophies.mainDomesticCup > 0 && (
+                <div style={{ textAlign: 'center' }}>
+                  <div style={{ fontSize: '1.5rem' }}>🏆</div>
+                  <div style={{ color: 'white', fontSize: '0.875rem' }}>Main Domestic Cup</div>
+                  <div style={{ color: '#22d3ee', fontWeight: 700, fontSize: '1.25rem' }}>{achievementsSummary.specificTrophies.mainDomesticCup}</div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   // Get player stats from new API format
   const getPlayerStats = () => {
     if (!player || !player.careerStats) return null;
@@ -214,7 +381,7 @@ export default function FootballAI({
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
-        height: '500px',
+        height: '400px',
         animation: 'fadeIn 0.3s ease-out',
       }}>
         <div style={{
@@ -252,7 +419,7 @@ export default function FootballAI({
         {/* Header */}
         <div style={{ marginBottom: '2rem' }}>
           <h2 style={{ 
-            fontSize: '2.5rem', 
+            fontSize: '2rem',
             fontWeight: 800, 
             marginBottom: '0.5rem', 
             color: 'white',
@@ -303,7 +470,7 @@ export default function FootballAI({
         {analysis && (
           <div style={{
             background: 'rgba(30, 41, 59, 0.7)',
-            padding: '1.75rem',
+            padding: '1.5rem',
             borderRadius: '1rem',
             marginBottom: '2rem',
             border: '1px solid rgba(255, 255, 255, 0.15)',
@@ -338,8 +505,15 @@ export default function FootballAI({
         {/* ACHIEVEMENTS SECTION */}
         {((team && (team.achievementsSummary || team.trophies || team.achievements)) || 
           (player && player.achievementsSummary)) && (
-          <Section title="🏆 Achievements" icon="🏆" animationDelay="0.2s">
+          <Section title="🏆 Achievements Summary" icon="🏆" animationDelay="0.2s">
             {renderStructuredAchievements(entity)}
+          </Section>
+        )}
+        
+        {/* Detailed Club Trophies Section */}
+        {team && team.type === 'club' && (
+          <Section title="📊 Detailed Trophy Cabinet" icon="📊" animationDelay="0.3s">
+            {renderDetailedClubTrophies(team)}
           </Section>
         )}
         
@@ -347,10 +521,10 @@ export default function FootballAI({
         {(player || team) && (
           <div style={{
             display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+            gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
             gap: '1rem',
             marginBottom: '2rem',
-            animation: 'fadeIn 0.6s ease-out 0.3s both',
+            animation: 'fadeIn 0.6s ease-out 0.4s both',
           }}>
             {player && (
               <>
@@ -397,10 +571,10 @@ export default function FootballAI({
           <>
             {/* Career Statistics */}
             {playerStats && (playerStats.goals > 0 || playerStats.assists > 0 || playerStats.appearances > 0) && (
-              <Section title="Career Statistics" icon="📊" animationDelay="0.4s">
+              <Section title="Career Statistics" icon="📊" animationDelay="0.5s">
                 <div style={{ 
                   display: 'grid', 
-                  gridTemplateColumns: playerStats.internationalCaps > 0 ? 'repeat(4, 1fr)' : 'repeat(3, 1fr)', 
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', 
                   gap: '1.5rem',
                   textAlign: 'center',
                 }}>
@@ -421,10 +595,10 @@ export default function FootballAI({
             
             {/* Player Details */}
             {(player.height || player.preferredFoot || player.dateOfBirth || player.playingStyle) && (
-              <Section title="Player Details" icon="ℹ️" animationDelay="0.5s">
+              <Section title="Player Details" icon="ℹ️" animationDelay="0.6s">
                 <div style={{ 
                   display: 'grid', 
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', 
+                  gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', 
                   gap: '1rem',
                 }}>
                   {player.dateOfBirth && (
@@ -460,7 +634,7 @@ export default function FootballAI({
             
             {/* Club Career */}
             {player.clubCareer && player.clubCareer.length > 0 && (
-              <Section title="Club Career" icon="🏛️" animationDelay="0.6s">
+              <Section title="Club Career" icon="🏛️" animationDelay="0.7s">
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
                   {player.clubCareer.map((club: any, index: number) => (
                     <div 
@@ -492,9 +666,9 @@ export default function FootballAI({
           <>
             {/* Key Players */}
             {team.currentSquad?.keyPlayers && team.currentSquad.keyPlayers.length > 0 && (
-              <Section title="Key Players" icon="⭐" animationDelay="0.4s">
+              <Section title="Key Players" icon="⭐" animationDelay="0.5s">
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
-                  {team.currentSquad.keyPlayers.map((player: any, index: number) => (
+                  {team.currentSquad.keyPlayers.slice(0, 6).map((player: any, index: number) => (
                     <div 
                       key={index}
                       style={{
@@ -515,7 +689,7 @@ export default function FootballAI({
             
             {/* Main Rivalries */}
             {team.mainRivalries && team.mainRivalries.length > 0 && (
-              <Section title="Main Rivalries" icon="⚔️" animationDelay="0.5s">
+              <Section title="Main Rivalries" icon="⚔️" animationDelay="0.6s">
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem' }}>
                   {team.mainRivalries.map((rivalry: string, index: number) => (
                     <div 
@@ -540,7 +714,7 @@ export default function FootballAI({
             {isNationalTeam && (
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
                 gap: '1rem',
                 marginTop: '1.5rem',
               }}>
@@ -598,12 +772,12 @@ export default function FootballAI({
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
-      height: '500px',
+      height: '400px',
       textAlign: 'center',
       animation: 'fadeIn 0.5s ease-out',
     }}>
       <div style={{
-        fontSize: '5rem',
+        fontSize: '4rem',
         marginBottom: '1.5rem',
         opacity: 0.8,
         animation: 'fadeIn 1s ease-out',
@@ -611,7 +785,7 @@ export default function FootballAI({
         ⚽
       </div>
       <h3 style={{
-        fontSize: '2rem',
+        fontSize: '1.75rem',
         fontWeight: 700,
         marginBottom: '1rem',
         color: 'white',
@@ -715,7 +889,7 @@ function Section({ title, icon, children, animationDelay }: {
   return (
     <div style={{
       background: 'rgba(30, 41, 59, 0.5)',
-      padding: '1.75rem',
+      padding: '1.5rem',
       borderRadius: '1rem',
       marginTop: '1.5rem',
       border: '1px solid rgba(255, 255, 255, 0.1)',

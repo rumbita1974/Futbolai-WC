@@ -55,7 +55,8 @@ export default function FootballSearch({
         console.log('📊 Data received:', {
           playerInfo: !!data.playerInfo,
           teamInfo: !!data.teamInfo,
-          achievementsSummary: data.playerInfo?.achievementsSummary || data.teamInfo?.achievementsSummary
+          trophies: data.teamInfo?.trophies ? 'Yes' : 'No',
+          achievementsSummary: data.playerInfo?.achievementsSummary || data.teamInfo?.achievementsSummary ? 'Yes' : 'No'
         });
         
         const responseType = data.type || 'general';
@@ -188,13 +189,34 @@ export default function FootballSearch({
           // Add trophy details
           if (data.teamInfo.trophies) {
             const { trophies } = data.teamInfo;
-            ['domestic', 'continental', 'worldwide'].forEach((category) => {
-              if (trophies[category]) {
-                trophies[category].forEach((trophy: any) => {
-                  teamAchievements.push(`${trophy.competition}: ${trophy.wins} wins`);
-                });
-              }
-            });
+            
+            // Continental trophies
+            if (trophies.continental) {
+              trophies.continental.forEach((trophy: any) => {
+                teamAchievements.push(`${trophy.competition}: ${trophy.wins}`);
+              });
+            }
+            
+            // International trophies
+            if (trophies.international) {
+              trophies.international.forEach((trophy: any) => {
+                teamAchievements.push(`${trophy.competition}: ${trophy.wins}`);
+              });
+            }
+            
+            // Domestic league trophies
+            if (trophies.domestic?.league) {
+              trophies.domestic.league.forEach((trophy: any) => {
+                teamAchievements.push(`${trophy.competition}: ${trophy.wins}`);
+              });
+            }
+            
+            // Domestic cup trophies
+            if (trophies.domestic?.cup) {
+              trophies.domestic.cup.forEach((trophy: any) => {
+                teamAchievements.push(`${trophy.competition}: ${trophy.wins}`);
+              });
+            }
           }
           
           // Add major honors for national teams
@@ -261,7 +283,14 @@ export default function FootballSearch({
             currentSeason: data.teamInfo.currentSeason || null
           };
           
-          console.log('🏟️ Enhanced team data prepared with achievementsSummary');
+          console.log('🏟️ Enhanced team data prepared with detailed trophies');
+          console.log('📊 Trophy structure:', {
+            continental: teamData.trophies?.continental?.length || 0,
+            international: teamData.trophies?.international?.length || 0,
+            domesticLeagues: teamData.trophies?.domestic?.league?.length || 0,
+            domesticCups: teamData.trophies?.domestic?.cup?.length || 0
+          });
+          
           onTeamSelect(teamData);
         }
         else if (responseType === 'worldCup' && data.worldCupInfo) {
@@ -330,12 +359,14 @@ export default function FootballSearch({
     'Argentina',
     'World Cup 2026',
     'Manchester City',
-    'Bayern Munich'
+    'Bayern Munich',
+    'Liverpool',
+    'PSG'
   ];
 
   return (
     <div>
-      <h2 style={{ fontSize: '2rem', fontWeight: 700, marginBottom: '1.5rem', color: 'white' }}>
+      <h2 style={{ fontSize: '1.75rem', fontWeight: 700, marginBottom: '1.5rem', color: 'white' }}>
         ⚽ Football AI Search
       </h2>
       
@@ -353,7 +384,7 @@ export default function FootballSearch({
         </div>
       )}
       
-      <form onSubmit={handleSearch} style={{ display: 'flex', gap: '1rem' }}>
+      <form onSubmit={handleSearch} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
         <div style={{ flex: 1, position: 'relative' }}>
           <div style={{
             position: 'absolute',
@@ -362,6 +393,7 @@ export default function FootballSearch({
             transform: 'translateY(-50%)',
             color: '#94a3b8',
             fontSize: '1.25rem',
+            zIndex: 1,
           }}>
             🔍
           </div>
@@ -375,7 +407,7 @@ export default function FootballSearch({
             placeholder="Search players, teams, World Cup 2026..."
             style={{
               width: '100%',
-              padding: '1rem 1rem 1rem 3rem',
+              padding: '0.875rem 0.875rem 0.875rem 3rem',
               background: 'rgba(255, 255, 255, 0.1)',
               border: error ? '1px solid rgba(239, 68, 68, 0.5)' : '1px solid rgba(255, 255, 255, 0.2)',
               borderRadius: '0.75rem',
@@ -388,7 +420,7 @@ export default function FootballSearch({
         <button
           type="submit"
           style={{
-            padding: '1rem 2rem',
+            padding: '0.875rem 1.5rem',
             background: 'linear-gradient(to right, #4ade80, #22d3ee)',
             color: 'white',
             border: 'none',
@@ -396,6 +428,8 @@ export default function FootballSearch({
             fontWeight: 600,
             cursor: 'pointer',
             transition: 'all 0.3s ease',
+            fontSize: '1rem',
+            width: '100%',
           }}
           onMouseEnter={(e) => {
             e.currentTarget.style.transform = 'translateY(-2px)';
@@ -409,36 +443,47 @@ export default function FootballSearch({
           Search
         </button>
       </form>
-      <div style={{ marginTop: '1.5rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-        {quickSearches.map((term) => (
-          <button
-            key={term}
-            onClick={() => handleExampleClick(term)}
-            style={{
-              padding: '0.5rem 1rem',
-              background: 'rgba(255, 255, 255, 0.1)',
-              border: '1px solid rgba(255, 255, 255, 0.2)',
-              borderRadius: '999px',
-              color: 'white',
-              fontSize: '0.875rem',
-              cursor: 'pointer',
-              transition: 'all 0.2s ease',
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.background = 'rgba(74, 222, 128, 0.2)';
-              e.currentTarget.style.borderColor = '#4ade80';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
-              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
-            }}
-          >
-            {term}
-          </button>
-        ))}
+      
+      <div style={{ marginTop: '1.5rem' }}>
+        <p style={{ color: '#94a3b8', fontSize: '0.875rem', marginBottom: '0.75rem' }}>
+          Quick searches:
+        </p>
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          {quickSearches.map((term) => (
+            <button
+              key={term}
+              onClick={() => handleExampleClick(term)}
+              style={{
+                padding: '0.5rem 1rem',
+                background: 'rgba(255, 255, 255, 0.1)',
+                border: '1px solid rgba(255, 255, 255, 0.2)',
+                borderRadius: '999px',
+                color: 'white',
+                fontSize: '0.875rem',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                whiteSpace: 'nowrap',
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = 'rgba(74, 222, 128, 0.2)';
+                e.currentTarget.style.borderColor = '#4ade80';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.1)';
+                e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)';
+              }}
+            >
+              {term}
+            </button>
+          ))}
+        </div>
       </div>
+      
       <div style={{ marginTop: '1rem', fontSize: '0.875rem', color: '#94a3b8' }}>
         <p>Get detailed stats, trophy counts, current managers, and AI analysis</p>
+        <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#64748b' }}>
+          Includes: Player stats • Club trophies • National team achievements • Video highlights
+        </p>
       </div>
     </div>
   );

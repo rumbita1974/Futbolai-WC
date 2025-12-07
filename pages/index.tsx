@@ -15,9 +15,9 @@ export default function Home() {
   const styles = {
     container: {
       minHeight: '100vh',
-      background: '#0a3e1a', // Base dark green
+      background: '#0a3e1a',
       color: 'white',
-      padding: '2rem',
+      padding: '1rem',
       fontFamily: "'Inter', -apple-system, BlinkMacSystemFont, sans-serif",
       position: 'relative' as const,
       overflow: 'hidden',
@@ -29,84 +29,26 @@ export default function Home() {
       right: 0,
       bottom: 0,
       background: `
-        /* Base pitch color with gradient for depth */
         linear-gradient(160deg, #0a5c2a 0%, #1a7c3a 30%, #0a5c2a 70%, #094522 100%),
-        
-        /* Pitch lines - perspective view */
-        /* Center line */
         linear-gradient(
           160deg,
           transparent 0%,
           transparent 45%,
-          rgba(255, 255, 255, 0.3) 45%,
-          rgba(255, 255, 255, 0.3) 55%,
+          rgba(255, 255, 255, 0.2) 45%,
+          rgba(255, 255, 255, 0.2) 55%,
           transparent 55%,
           transparent 100%
         ),
-        
-        /* Touch lines (sides) */
         linear-gradient(
           to right,
-          transparent 5%,
-          rgba(255, 255, 255, 0.3) 5%,
-          rgba(255, 255, 255, 0.3) 6%,
-          transparent 6%,
-          transparent 94%,
-          rgba(255, 255, 255, 0.3) 94%,
-          rgba(255, 255, 255, 0.3) 95%,
-          transparent 95%
-        ),
-        
-        /* Goal lines */
-        linear-gradient(
-          to bottom,
-          transparent 8%,
-          rgba(255, 255, 255, 0.3) 8%,
-          rgba(255, 255, 255, 0.3) 9%,
-          transparent 9%,
-          transparent 91%,
-          rgba(255, 255, 255, 0.3) 91%,
-          rgba(255, 255, 255, 0.3) 92%,
-          transparent 92%
-        ),
-        
-        /* Center circle - elliptical for perspective */
-        radial-gradient(
-          ellipse 40% 25% at 50% 50%,
-          transparent 65%,
-          rgba(255, 255, 255, 0.2) 65.5%,
-          rgba(255, 255, 255, 0.2) 67%,
-          transparent 67.5%
-        ),
-        
-        /* Penalty areas */
-        linear-gradient(
-          160deg,
-          transparent 0%,
-          transparent 25%,
-          rgba(255, 255, 255, 0.15) 25%,
-          rgba(255, 255, 255, 0.15) 30%,
-          transparent 30%,
-          transparent 70%,
-          rgba(255, 255, 255, 0.15) 70%,
-          rgba(255, 255, 255, 0.15) 75%,
-          transparent 75%
-        ),
-        
-        /* Grass texture */
-        repeating-linear-gradient(
-          90deg,
-          rgba(0, 0, 0, 0.05) 0px,
-          rgba(0, 0, 0, 0.05) 1px,
-          transparent 1px,
-          transparent 50px
-        ),
-        repeating-linear-gradient(
-          0deg,
-          rgba(0, 0, 0, 0.03) 0px,
-          rgba(0, 0, 0, 0.03) 1px,
-          transparent 1px,
-          transparent 50px
+          transparent 3%,
+          rgba(255, 255, 255, 0.2) 3%,
+          rgba(255, 255, 255, 0.2) 4%,
+          transparent 4%,
+          transparent 96%,
+          rgba(255, 255, 255, 0.2) 96%,
+          rgba(255, 255, 255, 0.2) 97%,
+          transparent 97%
         )
       `,
       backgroundSize: '100% 100%',
@@ -122,28 +64,10 @@ export default function Home() {
       right: 0,
       bottom: 0,
       background: `
-        /* Light vignette effect */
         radial-gradient(
           ellipse at center,
           transparent 0%,
           rgba(0, 0, 0, 0.4) 100%
-        ),
-        
-        /* Stadium lights effect */
-        radial-gradient(
-          circle at 20% 10%,
-          rgba(74, 222, 128, 0.1) 0%,
-          transparent 50%
-        ),
-        radial-gradient(
-          circle at 80% 10%,
-          rgba(34, 211, 238, 0.1) 0%,
-          transparent 50%
-        ),
-        radial-gradient(
-          circle at 50% 90%,
-          rgba(251, 191, 36, 0.1) 0%,
-          transparent 50%
         )
       `,
       pointerEvents: 'none' as const,
@@ -156,7 +80,7 @@ export default function Home() {
     },
     header: {
       textAlign: 'center' as const,
-      marginBottom: '3rem',
+      marginBottom: '2rem',
       maxWidth: '800px',
       marginLeft: 'auto',
       marginRight: 'auto',
@@ -164,72 +88,89 @@ export default function Home() {
       zIndex: 3,
     },
     title: {
-      fontSize: '3.5rem',
+      fontSize: '2.5rem',
       fontWeight: 800,
-      marginBottom: '1rem',
+      marginBottom: '0.75rem',
       background: 'linear-gradient(to right, #4ade80, #ffffff, #22d3ee)',
       WebkitBackgroundClip: 'text',
       WebkitTextFillColor: 'transparent',
       lineHeight: 1.2,
       letterSpacing: '-0.025em',
-      textShadow: '0 4px 20px rgba(0, 0, 0, 0.5)',
+      textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
     },
     subtitle: {
       color: '#e2e8f0',
-      fontSize: '1.25rem',
-      lineHeight: 1.6,
+      fontSize: '1rem',
+      lineHeight: 1.5,
       opacity: 0.95,
-      textShadow: '0 2px 10px rgba(0, 0, 0, 0.5)',
+      textShadow: '0 1px 5px rgba(0, 0, 0, 0.5)',
       background: 'rgba(0, 0, 0, 0.4)',
-      padding: '1rem',
-      borderRadius: '1rem',
+      padding: '0.75rem',
+      borderRadius: '0.75rem',
       display: 'inline-block',
+      marginBottom: '1rem',
+    },
+    timestampContainer: {
+      marginTop: '0.75rem',
+      padding: '0.5rem',
+      background: 'rgba(0, 0, 0, 0.3)',
+      borderRadius: '0.5rem',
+      border: '1px solid rgba(74, 222, 128, 0.3)',
+      fontSize: '0.75rem',
+      color: '#94a3b8',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '0.25rem',
+      flexWrap: 'wrap' as const,
+    },
+    timestampIcon: {
+      color: '#4ade80',
+    },
+    timestampText: {
+      color: '#e2e8f0',
+      textAlign: 'center' as const,
     },
     mainGrid: {
       display: 'grid',
       gridTemplateColumns: '1fr',
-      gap: '2rem',
+      gap: '1.5rem',
       position: 'relative' as const,
       zIndex: 3,
-    },
-    topSection: {
-      display: 'grid',
-      gridTemplateColumns: '1fr',
-      gap: '2rem',
     },
     searchContainer: {
       background: 'rgba(10, 30, 10, 0.85)',
       backdropFilter: 'blur(10px)',
-      borderRadius: '1.5rem',
-      padding: '2rem',
-      boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(74, 222, 128, 0.3)',
-      border: '2px solid rgba(74, 222, 128, 0.5)',
+      borderRadius: '1rem',
+      padding: '1.5rem',
+      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(74, 222, 128, 0.3)',
+      border: '1px solid rgba(74, 222, 128, 0.5)',
     },
     aiContainer: {
       background: 'rgba(10, 30, 10, 0.85)',
       backdropFilter: 'blur(10px)',
-      borderRadius: '1.5rem',
-      padding: '2.5rem',
-      boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(34, 211, 238, 0.3)',
-      border: '2px solid rgba(34, 211, 238, 0.5)',
-      minHeight: '500px',
+      borderRadius: '1rem',
+      padding: '1.5rem',
+      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(34, 211, 238, 0.3)',
+      border: '1px solid rgba(34, 211, 238, 0.5)',
+      minHeight: '400px',
     },
     videoSection: {
       background: 'rgba(10, 30, 10, 0.85)',
       backdropFilter: 'blur(10px)',
-      borderRadius: '1.5rem',
-      padding: '2rem',
-      boxShadow: '0 20px 60px rgba(0, 0, 0, 0.6), inset 0 0 0 1px rgba(251, 191, 36, 0.3)',
-      border: '2px solid rgba(251, 191, 36, 0.5)',
-      marginTop: '2rem',
+      borderRadius: '1rem',
+      padding: '1.5rem',
+      boxShadow: '0 10px 30px rgba(0, 0, 0, 0.5), inset 0 0 0 1px rgba(251, 191, 36, 0.3)',
+      border: '1px solid rgba(251, 191, 36, 0.5)',
+      marginTop: '1.5rem',
     },
     videoHeader: {
-      fontSize: '2rem',
+      fontSize: '1.5rem',
       fontWeight: 700,
-      marginBottom: '1.5rem',
+      marginBottom: '1rem',
       display: 'flex',
       alignItems: 'center',
-      gap: '1rem',
+      gap: '0.75rem',
       background: 'linear-gradient(to right, #4ade80, #3b82f6)',
       WebkitBackgroundClip: 'text',
       WebkitTextFillColor: 'transparent',
@@ -238,12 +179,12 @@ export default function Home() {
       position: 'relative' as const,
       width: '100%',
       paddingBottom: '56.25%',
-      borderRadius: '1rem',
+      borderRadius: '0.75rem',
       overflow: 'hidden',
       background: 'rgba(0, 0, 0, 0.4)',
-      marginBottom: '1.5rem',
-      boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.8)',
-      border: '2px solid rgba(255, 255, 255, 0.2)',
+      marginBottom: '1rem',
+      boxShadow: '0 15px 30px -8px rgba(0, 0, 0, 0.7)',
+      border: '1px solid rgba(255, 255, 255, 0.2)',
     },
     iframe: {
       position: 'absolute' as const,
@@ -254,38 +195,38 @@ export default function Home() {
       border: 'none',
     },
     noVideo: {
-      padding: '4rem 2rem',
+      padding: '2rem 1rem',
       textAlign: 'center' as const,
       background: 'rgba(0, 0, 0, 0.5)',
-      borderRadius: '1rem',
+      borderRadius: '0.75rem',
       border: '2px dashed rgba(74, 222, 128, 0.5)',
     },
     placeholderIcon: {
-      fontSize: '4rem',
-      marginBottom: '1.5rem',
+      fontSize: '3rem',
+      marginBottom: '1rem',
       opacity: 0.8,
-      filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5))',
+      filter: 'drop-shadow(0 2px 4px rgba(0, 0, 0, 0.5))',
     },
     placeholderText: {
       color: '#e2e8f0',
-      fontSize: '1.25rem',
+      fontSize: '1.125rem',
       fontWeight: 500,
     },
     placeholderSubtext: {
       color: '#cbd5e1',
-      fontSize: '1rem',
-      marginTop: '0.75rem',
+      fontSize: '0.875rem',
+      marginTop: '0.5rem',
     },
     videoNote: {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: '0.75rem',
-      fontSize: '0.875rem',
+      gap: '0.5rem',
+      fontSize: '0.75rem',
       color: '#e2e8f0',
-      padding: '1rem',
+      padding: '0.75rem',
       background: 'rgba(0, 0, 0, 0.5)',
-      borderRadius: '0.75rem',
+      borderRadius: '0.5rem',
       border: '1px solid rgba(74, 222, 128, 0.3)',
     },
     loadingOverlay: {
@@ -298,21 +239,23 @@ export default function Home() {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: '1rem',
+      borderRadius: '0.75rem',
       zIndex: 10,
+      flexDirection: 'column' as const,
+      gap: '1rem',
     },
     loadingSpinner: {
-      width: '50px',
-      height: '50px',
-      border: '4px solid rgba(74, 222, 128, 0.3)',
+      width: '40px',
+      height: '40px',
+      border: '3px solid rgba(74, 222, 128, 0.3)',
       borderTopColor: '#4ade80',
       borderRadius: '50%',
       animation: 'spin 1s linear infinite',
     },
     footer: {
-      marginTop: '4rem',
-      paddingTop: '2rem',
-      borderTop: '2px solid rgba(74, 222, 128, 0.3)',
+      marginTop: '2rem',
+      paddingTop: '1.5rem',
+      borderTop: '1px solid rgba(74, 222, 128, 0.3)',
       position: 'relative' as const,
       zIndex: 3,
     },
@@ -322,23 +265,23 @@ export default function Home() {
       display: 'flex',
       flexDirection: 'column' as const,
       alignItems: 'center',
-      gap: '1.5rem',
+      gap: '1rem',
     },
     footerContent: {
       display: 'flex',
       flexDirection: 'column' as const,
       alignItems: 'center',
-      gap: '1rem',
+      gap: '0.75rem',
       width: '100%',
     },
     attribution: {
       textAlign: 'center' as const,
-      padding: '0 1rem',
+      padding: '0 0.5rem',
     },
     developer: {
-      fontSize: '1rem',
+      fontSize: '0.875rem',
       color: '#e2e8f0',
-      marginBottom: '0.5rem',
+      marginBottom: '0.25rem',
     },
     developerName: {
       fontWeight: 600,
@@ -348,57 +291,37 @@ export default function Home() {
       WebkitTextFillColor: 'transparent',
     },
     copyright: {
-      fontSize: '0.875rem',
+      fontSize: '0.75rem',
       color: '#cbd5e1',
     },
     disclaimerContainer: {
-      maxWidth: '600px',
+      maxWidth: '100%',
       textAlign: 'center' as const,
-      padding: '1rem',
+      padding: '0.75rem',
       background: 'rgba(0, 0, 0, 0.5)',
-      borderRadius: '0.75rem',
+      borderRadius: '0.5rem',
       border: '1px solid rgba(74, 222, 128, 0.3)',
     },
     disclaimerTitle: {
-      fontSize: '0.875rem',
+      fontSize: '0.75rem',
       fontWeight: 600,
       color: '#4ade80',
-      marginBottom: '0.5rem',
+      marginBottom: '0.25rem',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      gap: '0.5rem',
+      gap: '0.25rem',
     },
     disclaimerText: {
-      fontSize: '0.75rem',
+      fontSize: '0.65rem',
       color: '#cbd5e1',
-      lineHeight: 1.5,
+      lineHeight: 1.4,
     },
     separator: {
-      height: '2px',
-      width: '80px',
+      height: '1px',
+      width: '60px',
       background: 'linear-gradient(to right, transparent, #4ade80, transparent)',
-      margin: '0.5rem 0',
-    },
-    // NEW STYLES FOR TIMESTAMP
-    timestampContainer: {
-      marginTop: '1rem',
-      padding: '0.75rem',
-      background: 'rgba(0, 0, 0, 0.3)',
-      borderRadius: '0.75rem',
-      border: '1px solid rgba(74, 222, 128, 0.3)',
-      fontSize: '0.875rem',
-      color: '#94a3b8',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: '0.5rem',
-    },
-    timestampIcon: {
-      color: '#4ade80',
-    },
-    timestampText: {
-      color: '#e2e8f0',
+      margin: '0.25rem 0',
     },
   };
 
@@ -420,7 +343,7 @@ export default function Home() {
 
   return (
     <div style={styles.container}>
-      {/* Modern oblique football pitch background */}
+      {/* Simplified pitch background for mobile */}
       <div style={styles.pitchContainer}></div>
       <div style={styles.pitchOverlay}></div>
       
@@ -431,21 +354,35 @@ export default function Home() {
         
         @keyframes float {
           0%, 100% { transform: translateY(0px); }
-          50% { transform: translateY(-10px); }
+          50% { transform: translateY(-5px); }
         }
         
         .float {
           animation: float 3s ease-in-out infinite;
         }
         
-        /* Subtle glow on hover */
-        .content-box {
-          transition: all 0.3s ease;
+        /* Mobile optimizations */
+        @media (min-width: 768px) {
+          .content-box {
+            transition: all 0.3s ease;
+          }
+          
+          .content-box:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8);
+          }
         }
         
-        .content-box:hover {
-          transform: translateY(-5px);
-          box-shadow: 0 25px 70px rgba(0, 0, 0, 0.8);
+        /* Improve touch targets on mobile */
+        button, input {
+          -webkit-tap-highlight-color: transparent;
+        }
+        
+        /* Prevent zoom on mobile inputs */
+        @media (max-width: 767px) {
+          input, select, textarea {
+            font-size: 16px !important;
+          }
         }
       `}</style>
       
@@ -472,39 +409,37 @@ export default function Home() {
         </header>
 
         <div style={styles.mainGrid}>
-          <div style={styles.topSection}>
-            <div style={styles.searchContainer} className="content-box">
-              <FootballSearch
-                onPlayerSelect={handlePlayerSelect}
-                onTeamSelect={handleTeamSelect}
-                onVideoFound={setVideoUrl}
-                onLoadingChange={setIsLoading}
-                onAnalysisUpdate={setAnalysis}
-                onTeamsUpdate={setTeams}
-                onWorldCupUpdate={handleWorldCupUpdate}
-              />
-            </div>
+          <div style={styles.searchContainer} className="content-box">
+            <FootballSearch
+              onPlayerSelect={handlePlayerSelect}
+              onTeamSelect={handleTeamSelect}
+              onVideoFound={setVideoUrl}
+              onLoadingChange={setIsLoading}
+              onAnalysisUpdate={setAnalysis}
+              onTeamsUpdate={setTeams}
+              onWorldCupUpdate={handleWorldCupUpdate}
+            />
+          </div>
+          
+          <div style={styles.aiContainer} className="content-box">
+            <FootballAI
+              player={selectedPlayer}
+              team={selectedTeam}
+              isLoading={isLoading}
+              analysis={analysis}
+              teams={teams}
+              worldCupInfo={worldCupInfo}
+            />
             
-            <div style={styles.aiContainer} className="content-box">
-              <FootballAI
-                player={selectedPlayer}
-                team={selectedTeam}
-                isLoading={isLoading}
-                analysis={analysis}
-                teams={teams}
-                worldCupInfo={worldCupInfo}
-              />
-              
-              {/* Show last updated timestamp */}
-              {lastUpdated && (
-                <div style={styles.timestampContainer}>
-                  <span style={styles.timestampIcon}>⏱️</span>
-                  <span style={styles.timestampText}>
-                    Last updated: {lastUpdated}
-                  </span>
-                </div>
-              )}
-            </div>
+            {/* Show last updated timestamp */}
+            {lastUpdated && (
+              <div style={styles.timestampContainer}>
+                <span style={styles.timestampIcon}>⏱️</span>
+                <span style={styles.timestampText}>
+                  Last updated: {lastUpdated}
+                </span>
+              </div>
+            )}
           </div>
 
           <div style={styles.videoSection} className="content-box">
@@ -514,11 +449,13 @@ export default function Home() {
             </div>
             
             {isLoading ? (
-              <div style={{ position: 'relative', minHeight: '200px' }}>
+              <div style={{ position: 'relative', minHeight: '150px' }}>
                 <div style={styles.videoContainer}>
                   <div style={styles.loadingOverlay}>
                     <div style={styles.loadingSpinner}></div>
-                    <p style={{ marginLeft: '1rem', color: '#4ade80' }}>Loading highlights...</p>
+                    <p style={{ color: '#4ade80', fontSize: '0.875rem', textAlign: 'center' }}>
+                      Loading highlights...
+                    </p>
                   </div>
                 </div>
               </div>

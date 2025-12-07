@@ -74,7 +74,7 @@ function getCurrentDateContext() {
   return `${month} ${year}`;
 }
 
-// Enhanced prompt with detailed information AND STRICT FORMATTING
+// Enhanced prompt with detailed trophy categories
 async function analyzeFootballQuery(query: string) {
   console.log('🤖 Starting AI analysis for:', query);
   const groq = getGroqClient();
@@ -195,22 +195,45 @@ FOR CLUB TEAMS (like Real Madrid, Barcelona, Manchester City):
       "domesticTitles": {
         "leagues": 0,
         "cups": 0
+      },
+      "specificTrophies": {
+        "championsLeague": 0,
+        "europaLeague": 0,
+        "clubWorldCup": 0,
+        "domesticLeague": 0,
+        "mainDomesticCup": 0
       }
     },
     
     "trophies": {
-      "domestic": [
-        {"competition": "La Liga", "wins": "Exact number (e.g., 35)", "icon": "🏆"},
-        {"competition": "Copa del Rey", "wins": "Exact number (e.g., 20)", "icon": "🥇"},
-        {"competition": "Supercopa de España", "wins": "Exact number", "icon": "🏅"}
-      ],
       "continental": [
         {"competition": "UEFA Champions League", "wins": "Exact number (e.g., 14)", "icon": "⭐"},
-        {"competition": "Europa League", "wins": "Exact number", "icon": "🌟"}
+        {"competition": "UEFA Europa League", "wins": "Exact number", "icon": "🌟"},
+        {"competition": "UEFA Super Cup", "wins": "Exact number", "icon": "⚽"}
       ],
-      "worldwide": [
-        {"competition": "FIFA Club World Cup", "wins": "Exact number", "icon": "🌍"}
-      ]
+      "international": [
+        {"competition": "FIFA Club World Cup", "wins": "Exact number", "icon": "🌍"},
+        {"competition": "Intercontinental Cup", "wins": "Exact number", "icon": "🏅"}
+      ],
+      "domestic": {
+        "league": [
+          {"competition": "La Liga", "wins": "Exact number (e.g., 35)", "icon": "🥇"},
+          {"competition": "Premier League", "wins": "Exact number", "icon": "🥇"},
+          {"competition": "Bundesliga", "wins": "Exact number", "icon": "🥇"},
+          {"competition": "Serie A", "wins": "Exact number", "icon": "🥇"},
+          {"competition": "Ligue 1", "wins": "Exact number", "icon": "🥇"}
+        ],
+        "cup": [
+          {"competition": "Copa del Rey", "wins": "Exact number (e.g., 20)", "icon": "🏆"},
+          {"competition": "FA Cup", "wins": "Exact number", "icon": "🏆"},
+          {"competition": "DFB-Pokal", "wins": "Exact number", "icon": "🏆"},
+          {"competition": "Coppa Italia", "wins": "Exact number", "icon": "🏆"},
+          {"competition": "Coupe de France", "wins": "Exact number", "icon": "🏆"},
+          {"competition": "Carabao Cup", "wins": "Exact number", "icon": "🥤"},
+          {"competition": "Supercopa de España", "wins": "Exact number", "icon": "🏅"},
+          {"competition": "Community Shield", "wins": "Exact number", "icon": "🛡️"}
+        ]
+      }
     },
     
     "currentSquad": {
@@ -264,7 +287,9 @@ FOR NATIONAL TEAMS (like Spain, Brazil, Argentina):
     "majorHonors": [
       {"competition": "FIFA World Cup", "titles": "Number of titles", "years": [2010, ...], "icon": "🏆"},
       {"competition": "UEFA European Championship", "titles": "Number", "years": [2008, 2012], "icon": "🇪🇺"},
-      {"competition": "Copa América", "titles": "Number", "years": [...], "icon": "🇦🇷"}
+      {"competition": "Copa América", "titles": "Number", "years": [...], "icon": "🇦🇷"},
+      {"competition": "CONCACAF Gold Cup", "titles": "Number", "years": [...], "icon": "🇺🇸"},
+      {"competition": "UEFA Nations League", "titles": "Number", "years": [...], "icon": "🏆"}
     ],
     
     "records": {
@@ -311,7 +336,7 @@ CRITICAL INSTRUCTIONS:
 1. ALWAYS include achievementsSummary with EXACT counts:
    - National teams: worldCupTitles, continentalTitles
    - Clubs: continentalTitles, internationalTitles, domesticTitles.leagues, domesticTitles.cups
-   - Players: Count achievements based on teamHonors
+   - Calculate specificTrophies counts from trophies data
 
 2. Use EXACT numbers (e.g., "14" not "fourteen")
 
@@ -321,9 +346,11 @@ CRITICAL INSTRUCTIONS:
 
 5. VideoSearchTerm must be specific and searchable
 
-6. Calculate achievementsSummary from trophies/majorHonors/teamHonors
+6. For club trophies, include ALL relevant competitions based on the team's country/league
 
 7. Ensure data is up-to-date as of ${currentDate}
+
+8. Only include competitions the team has actually won (no zero counts)
 
 Return ONLY the JSON object, no other text.`;
 
@@ -333,7 +360,7 @@ Return ONLY the JSON object, no other text.`;
       messages: [{ role: 'user', content: prompt }],
       model: 'llama-3.3-70b-versatile',
       temperature: 0.3,
-      max_tokens: 2000,
+      max_tokens: 2500,
     });
 
     const content = completion.choices[0]?.message?.content || '{}';
@@ -346,7 +373,14 @@ Return ONLY the JSON object, no other text.`;
       parsed.teamInfo.achievementsSummary = {
         continentalTitles: 0,
         internationalTitles: 0,
-        domesticTitles: { leagues: 0, cups: 0 }
+        domesticTitles: { leagues: 0, cups: 0 },
+        specificTrophies: {
+          championsLeague: 0,
+          europaLeague: 0,
+          clubWorldCup: 0,
+          domesticLeague: 0,
+          mainDomesticCup: 0
+        }
       };
     }
     
@@ -411,8 +445,8 @@ async function searchYouTube(searchTerm: string) {
         maxResults: 3,
         key: apiKey,
         videoEmbeddable: 'true',
-        safeSearch: 'none', // Changed from 'strict' to 'none' for more results
-        order: 'viewCount', // Most viewed videos first
+        safeSearch: 'none',
+        order: 'viewCount',
         videoDuration: 'any',
         relevanceLanguage: 'en',
       },
