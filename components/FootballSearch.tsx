@@ -104,7 +104,9 @@ export default function FootballSearch({
             playerInfo: !!data.playerInfo,
             teamInfo: !!data.teamInfo,
             worldCupInfo: !!data.worldCupInfo,
-            teamType: data.teamInfo?.type
+            teamType: data.teamInfo?.type,
+            language: data.language,
+            isSpanish: data.isSpanish
           });
           
           // Clear all data again before setting new data (just to be sure)
@@ -174,7 +176,11 @@ export default function FootballSearch({
               
               // Current year context
               currentYear: data.playerInfo.currentYear || new Date().getFullYear(),
-              lastUpdated: data.playerInfo.lastUpdated || new Date().toISOString()
+              lastUpdated: data.playerInfo.lastUpdated || new Date().toISOString(),
+              
+              // Language info
+              language: data.language,
+              isSpanish: data.isSpanish
             };
             
             console.log('👤 Enhanced player data prepared with achievementsSummary');
@@ -299,7 +305,11 @@ export default function FootballSearch({
               // Additional team info
               playingStyle: data.teamInfo.playingStyle,
               confederation: data.teamInfo.confederation,
-              fifaCode: data.teamInfo.fifaCode
+              fifaCode: data.teamInfo.fifaCode,
+              
+              // Language info
+              language: data.language,
+              isSpanish: data.isSpanish
             };
             
             console.log('🏟️ Enhanced team data prepared with detailed trophies');
@@ -325,7 +335,11 @@ export default function FootballSearch({
               
               // Current year context
               currentYear: data.worldCupInfo.currentYear || new Date().getFullYear(),
-              lastUpdated: data.worldCupInfo.lastUpdated || new Date().toISOString()
+              lastUpdated: data.worldCupInfo.lastUpdated || new Date().toISOString(),
+              
+              // Language info
+              language: data.language,
+              isSpanish: data.isSpanish
             };
             
             console.log('🌍 World Cup data prepared');
@@ -497,10 +511,10 @@ export default function FootballSearch({
     'Kylian Mbappé',
     'Real Madrid', 
     'FC Barcelona',
-    'Spain National Team',
-    'Brazil National Team',
-    'Argentina National Team',
-    'World Cup 2026',
+    'Selección Española',
+    'Selección Brasileña',
+    'Selección Argentina',
+    'Copa Mundial 2026',
     'Manchester City',
     'Bayern Munich',
     'Liverpool FC',
@@ -642,6 +656,17 @@ export default function FootballSearch({
       
       <div style={{ marginTop: '1rem', fontSize: '0.875rem', color: '#94a3b8' }}>
         <p>Get detailed stats, trophy counts, current managers, and AI analysis</p>
+        <div style={{
+          marginTop: '0.5rem',
+          fontSize: '0.75rem',
+          color: '#64748b',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '0.5rem',
+        }}>
+          <span>🌐</span>
+          <span>Spanish searches will use Spanish Wikipedia for accurate data</span>
+        </div>
         <p style={{ marginTop: '0.5rem', fontSize: '0.75rem', color: '#64748b' }}>
           Powered by Groq AI + Wikipedia • Current 2024 data • Video highlights
         </p>
