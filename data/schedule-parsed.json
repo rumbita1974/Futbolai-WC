@@ -1,0 +1,19 @@
+[
+  {
+    "id": 1,
+    "date": "2026-06-18",
+    "displayDate": "Thursday, June 18, 2026",
+    "team1": "Mexico",
+    "team2": "South Korea",
+    "venue": "Estadio Guadalajara",
+    "time": "TBD",
+    "group": "Group A",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  }
+]

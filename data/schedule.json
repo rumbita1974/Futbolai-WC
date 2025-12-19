@@ -1,0 +1,1770 @@
+[
+  {
+    "id": 1,
+    "date": "2026-06-11",
+    "displayDate": "Thursday, June 11, 2026",
+    "team1": "Mexico",
+    "team2": "South Africa",
+    "venue": "Mexico City Stadium",
+    "time": "TBD",
+    "group": "Group A",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 2,
+    "date": "2026-06-11",
+    "displayDate": "Thursday, June 11, 2026",
+    "team1": "South Korea",
+    "team2": "Czech Republic/Denmark/Macedonia/Ireland",
+    "venue": "Estadio Guadalajara",
+    "time": "TBD",
+    "group": "Group A",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 3,
+    "date": "2026-06-12",
+    "displayDate": "Friday, June 12, 2026",
+    "team1": "Canada",
+    "team2": "Bosnia/Italy/N. Ireland/Wales",
+    "venue": "Toronto Stadium",
+    "time": "TBD",
+    "group": "Group B",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 4,
+    "date": "2026-06-12",
+    "displayDate": "Friday, June 12, 2026",
+    "team1": "USA",
+    "team2": "Paraguay",
+    "venue": "Los Angeles Stadium",
+    "time": "TBD",
+    "group": "Group D",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 5,
+    "date": "2026-06-13",
+    "displayDate": "Saturday, June 13, 2026",
+    "team1": "Haiti",
+    "team2": "Scotland",
+    "venue": "Boston Stadium",
+    "time": "TBD",
+    "group": "Group C",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 6,
+    "date": "2026-06-13",
+    "displayDate": "Saturday, June 13, 2026",
+    "team1": "Australia",
+    "team2": "Kosovo/Romania/Slovakia/Turkey",
+    "venue": "BC Place Vancouver",
+    "time": "TBD",
+    "group": "Group D",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 7,
+    "date": "2026-06-13",
+    "displayDate": "Saturday, June 13, 2026",
+    "team1": "Brazil",
+    "team2": "Morocco",
+    "venue": "New York New Jersey Stadium",
+    "time": "TBD",
+    "group": "Group C",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 8,
+    "date": "2026-06-13",
+    "displayDate": "Saturday, June 13, 2026",
+    "team1": "Qatar",
+    "team2": "Switzerland",
+    "venue": "San Francisco Bay Area Stadium",
+    "time": "TBD",
+    "group": "Group B",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 9,
+    "date": "2026-06-14",
+    "displayDate": "Sunday, June 14, 2026",
+    "team1": "Ivory Coast",
+    "team2": "Ecuador",
+    "venue": "Philadelphia Stadium",
+    "time": "TBD",
+    "group": "Group E",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 10,
+    "date": "2026-06-14",
+    "displayDate": "Sunday, June 14, 2026",
+    "team1": "Germany",
+    "team2": "Curaçao",
+    "venue": "Houston Stadium",
+    "time": "TBD",
+    "group": "Group E",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 11,
+    "date": "2026-06-14",
+    "displayDate": "Sunday, June 14, 2026",
+    "team1": "Netherlands",
+    "team2": "Japan",
+    "venue": "Dallas Stadium",
+    "time": "TBD",
+    "group": "Group F",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 12,
+    "date": "2026-06-14",
+    "displayDate": "Sunday, June 14, 2026",
+    "team1": "Albania/Poland/Sweden/Ukraine",
+    "team2": "Tunisia",
+    "venue": "Estadio Monterrey",
+    "time": "TBD",
+    "group": "Group F",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 13,
+    "date": "2026-06-15",
+    "displayDate": "Monday, June 15, 2026",
+    "team1": "Saudi Arabia",
+    "team2": "Uruguay",
+    "venue": "Miami Stadium",
+    "time": "TBD",
+    "group": "Group H",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 14,
+    "date": "2026-06-15",
+    "displayDate": "Monday, June 15, 2026",
+    "team1": "Spain",
+    "team2": "Cape Verde",
+    "venue": "Atlanta Stadium",
+    "time": "TBD",
+    "group": "Group H",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 15,
+    "date": "2026-06-15",
+    "displayDate": "Monday, June 15, 2026",
+    "team1": "Iran",
+    "team2": "New Zealand",
+    "venue": "Los Angeles Stadium",
+    "time": "TBD",
+    "group": "Group G",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 16,
+    "date": "2026-06-15",
+    "displayDate": "Monday, June 15, 2026",
+    "team1": "Belgium",
+    "team2": "Egypt",
+    "venue": "Seattle Stadium",
+    "time": "TBD",
+    "group": "Group G",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 17,
+    "date": "2026-06-16",
+    "displayDate": "Tuesday, June 16, 2026",
+    "team1": "France",
+    "team2": "Senegal",
+    "venue": "New York New Jersey Stadium",
+    "time": "TBD",
+    "group": "Group I",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 18,
+    "date": "2026-06-16",
+    "displayDate": "Tuesday, June 16, 2026",
+    "team1": "Bolivia/Iraq/Suriname",
+    "team2": "Norway",
+    "venue": "Boston Stadium",
+    "time": "TBD",
+    "group": "Group I",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 19,
+    "date": "2026-06-16",
+    "displayDate": "Tuesday, June 16, 2026",
+    "team1": "Argentina",
+    "team2": "Algeria",
+    "venue": "Kansas City Stadium",
+    "time": "TBD",
+    "group": "Group J",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 20,
+    "date": "2026-06-16",
+    "displayDate": "Tuesday, June 16, 2026",
+    "team1": "Austria",
+    "team2": "Jordan",
+    "venue": "San Francisco Bay Area Stadium",
+    "time": "TBD",
+    "group": "Group J",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 21,
+    "date": "2026-06-17",
+    "displayDate": "Wednesday, June 17, 2026",
+    "team1": "Ghana",
+    "team2": "Panama",
+    "venue": "Toronto Stadium",
+    "time": "TBD",
+    "group": "Group L",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 22,
+    "date": "2026-06-17",
+    "displayDate": "Wednesday, June 17, 2026",
+    "team1": "England",
+    "team2": "Croatia",
+    "venue": "Dallas Stadium",
+    "time": "TBD",
+    "group": "Group L",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 23,
+    "date": "2026-06-17",
+    "displayDate": "Wednesday, June 17, 2026",
+    "team1": "Portugal",
+    "team2": "DR Congo/Jamaica/New Caledonia",
+    "venue": "Houston Stadium",
+    "time": "TBD",
+    "group": "Group K",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 24,
+    "date": "2026-06-17",
+    "displayDate": "Wednesday, June 17, 2026",
+    "team1": "Uzbekistan",
+    "team2": "Colombia",
+    "venue": "Mexico City Stadium",
+    "time": "TBD",
+    "group": "Group K",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 25,
+    "date": "2026-06-18",
+    "displayDate": "Thursday, June 18, 2026",
+    "team1": "Czech Republic/Denmark/Macedonia/Ireland",
+    "team2": "South Africa",
+    "venue": "Atlanta Stadium",
+    "time": "TBD",
+    "group": "Group A",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 26,
+    "date": "2026-06-18",
+    "displayDate": "Thursday, June 18, 2026",
+    "team1": "Switzerland",
+    "team2": "Bosnia/Italy/N. Ireland/Wales",
+    "venue": "Los Angeles Stadium",
+    "time": "TBD",
+    "group": "Group B",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 27,
+    "date": "2026-06-18",
+    "displayDate": "Thursday, June 18, 2026",
+    "team1": "Canada",
+    "team2": "Qatar",
+    "venue": "BC Place Vancouver",
+    "time": "TBD",
+    "group": "Group B",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 28,
+    "date": "2026-06-18",
+    "displayDate": "Thursday, June 18, 2026",
+    "team1": "Mexico",
+    "team2": "South Korea",
+    "venue": "Estadio Guadalajara",
+    "time": "TBD",
+    "group": "Group A",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 29,
+    "date": "2026-06-19",
+    "displayDate": "Friday, June 19, 2026",
+    "team1": "Brazil",
+    "team2": "Haiti",
+    "venue": "Philadelphia Stadium",
+    "time": "TBD",
+    "group": "Group C",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 30,
+    "date": "2026-06-19",
+    "displayDate": "Friday, June 19, 2026",
+    "team1": "Scotland",
+    "team2": "Morocco",
+    "venue": "Boston Stadium",
+    "time": "TBD",
+    "group": "Group C",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 31,
+    "date": "2026-06-19",
+    "displayDate": "Friday, June 19, 2026",
+    "team1": "Kosovo/Romania/Slovakia/Turkey",
+    "team2": "Paraguay",
+    "venue": "San Francisco Bay Area Stadium",
+    "time": "TBD",
+    "group": "Group D",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 32,
+    "date": "2026-06-19",
+    "displayDate": "Friday, June 19, 2026",
+    "team1": "USA",
+    "team2": "Australia",
+    "venue": "Seattle Stadium",
+    "time": "TBD",
+    "group": "Group D",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 33,
+    "date": "2026-06-20",
+    "displayDate": "Saturday, June 20, 2026",
+    "team1": "Germany",
+    "team2": "Ivory Coast",
+    "venue": "Toronto Stadium",
+    "time": "TBD",
+    "group": "Group E",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 34,
+    "date": "2026-06-20",
+    "displayDate": "Saturday, June 20, 2026",
+    "team1": "Ecuador",
+    "team2": "Curaçao",
+    "venue": "Kansas City Stadium",
+    "time": "TBD",
+    "group": "Group E",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 35,
+    "date": "2026-06-20",
+    "displayDate": "Saturday, June 20, 2026",
+    "team1": "Netherlands",
+    "team2": "Albania/Poland/Sweden/Ukraine",
+    "venue": "Houston Stadium",
+    "time": "TBD",
+    "group": "Group F",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 36,
+    "date": "2026-06-20",
+    "displayDate": "Saturday, June 20, 2026",
+    "team1": "Tunisia",
+    "team2": "Japan",
+    "venue": "Estadio Monterrey",
+    "time": "TBD",
+    "group": "Group F",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 37,
+    "date": "2026-06-21",
+    "displayDate": "Sunday, June 21, 2026",
+    "team1": "Uruguay",
+    "team2": "Cape Verde",
+    "venue": "Miami Stadium",
+    "time": "TBD",
+    "group": "Group H",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 38,
+    "date": "2026-06-21",
+    "displayDate": "Sunday, June 21, 2026",
+    "team1": "Spain",
+    "team2": "Saudi Arabia",
+    "venue": "Atlanta Stadium",
+    "time": "TBD",
+    "group": "Group H",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 39,
+    "date": "2026-06-21",
+    "displayDate": "Sunday, June 21, 2026",
+    "team1": "Belgium",
+    "team2": "Iran",
+    "venue": "Los Angeles Stadium",
+    "time": "TBD",
+    "group": "Group G",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 40,
+    "date": "2026-06-21",
+    "displayDate": "Sunday, June 21, 2026",
+    "team1": "New Zealand",
+    "team2": "Egypt",
+    "venue": "BC Place Vancouver",
+    "time": "TBD",
+    "group": "Group G",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 41,
+    "date": "2026-06-22",
+    "displayDate": "Monday, June 22, 2026",
+    "team1": "Norway",
+    "team2": "Senegal",
+    "venue": "New York New Jersey Stadium",
+    "time": "TBD",
+    "group": "Group I",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 42,
+    "date": "2026-06-22",
+    "displayDate": "Monday, June 22, 2026",
+    "team1": "France",
+    "team2": "Bolivia/Iraq/Suriname",
+    "venue": "Philadelphia Stadium",
+    "time": "TBD",
+    "group": "Group I",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 43,
+    "date": "2026-06-22",
+    "displayDate": "Monday, June 22, 2026",
+    "team1": "Argentina",
+    "team2": "Austria",
+    "venue": "Dallas Stadium",
+    "time": "TBD",
+    "group": "Group J",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 44,
+    "date": "2026-06-22",
+    "displayDate": "Monday, June 22, 2026",
+    "team1": "Jordan",
+    "team2": "Algeria",
+    "venue": "San Francisco Bay Area Stadium",
+    "time": "TBD",
+    "group": "Group J",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 45,
+    "date": "2026-06-23",
+    "displayDate": "Tuesday, June 23, 2026",
+    "team1": "England",
+    "team2": "Ghana",
+    "venue": "Boston Stadium",
+    "time": "TBD",
+    "group": "Group L",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 46,
+    "date": "2026-06-23",
+    "displayDate": "Tuesday, June 23, 2026",
+    "team1": "Panama",
+    "team2": "Croatia",
+    "venue": "Toronto Stadium",
+    "time": "TBD",
+    "group": "Group L",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 47,
+    "date": "2026-06-23",
+    "displayDate": "Tuesday, June 23, 2026",
+    "team1": "Portugal",
+    "team2": "Uzbekistan",
+    "venue": "Houston Stadium",
+    "time": "TBD",
+    "group": "Group K",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 48,
+    "date": "2026-06-23",
+    "displayDate": "Tuesday, June 23, 2026",
+    "team1": "Colombia",
+    "team2": "DR Congo/Jamaica/New Caledonia",
+    "venue": "Estadio Guadalajara",
+    "time": "TBD",
+    "group": "Group K",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 49,
+    "date": "2026-06-24",
+    "displayDate": "Wednesday, June 24, 2026",
+    "team1": "Scotland",
+    "team2": "Brazil",
+    "venue": "Miami Stadium",
+    "time": "TBD",
+    "group": "Group C",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 50,
+    "date": "2026-06-24",
+    "displayDate": "Wednesday, June 24, 2026",
+    "team1": "Morocco",
+    "team2": "Haiti",
+    "venue": "Atlanta Stadium",
+    "time": "TBD",
+    "group": "Group C",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 51,
+    "date": "2026-06-24",
+    "displayDate": "Wednesday, June 24, 2026",
+    "team1": "Switzerland",
+    "team2": "Canada",
+    "venue": "BC Place Vancouver",
+    "time": "TBD",
+    "group": "Group B",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 52,
+    "date": "2026-06-24",
+    "displayDate": "Wednesday, June 24, 2026",
+    "team1": "Bosnia/Italy/N. Ireland/Wales",
+    "team2": "Qatar",
+    "venue": "Seattle Stadium",
+    "time": "TBD",
+    "group": "Group B",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 53,
+    "date": "2026-06-24",
+    "displayDate": "Wednesday, June 24, 2026",
+    "team1": "Czech Republic/Denmark/Macedonia/Ireland",
+    "team2": "Mexico",
+    "venue": "Mexico City Stadium",
+    "time": "TBD",
+    "group": "Group A",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 54,
+    "date": "2026-06-24",
+    "displayDate": "Wednesday, June 24, 2026",
+    "team1": "South Africa",
+    "team2": "South Korea",
+    "venue": "Estadio Monterrey",
+    "time": "TBD",
+    "group": "Group A",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 55,
+    "date": "2026-06-25",
+    "displayDate": "Thursday, June 25, 2026",
+    "team1": "Curaçao",
+    "team2": "Ivory Coast",
+    "venue": "Philadelphia Stadium",
+    "time": "TBD",
+    "group": "Group E",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 56,
+    "date": "2026-06-25",
+    "displayDate": "Thursday, June 25, 2026",
+    "team1": "Ecuador",
+    "team2": "Germany",
+    "venue": "New York New Jersey Stadium",
+    "time": "TBD",
+    "group": "Group E",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 57,
+    "date": "2026-06-25",
+    "displayDate": "Thursday, June 25, 2026",
+    "team1": "Japan",
+    "team2": "Albania/Poland/Sweden/Ukraine",
+    "venue": "Dallas Stadium",
+    "time": "TBD",
+    "group": "Group F",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 58,
+    "date": "2026-06-25",
+    "displayDate": "Thursday, June 25, 2026",
+    "team1": "Tunisia",
+    "team2": "Netherlands",
+    "venue": "Kansas City Stadium",
+    "time": "TBD",
+    "group": "Group F",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 59,
+    "date": "2026-06-25",
+    "displayDate": "Thursday, June 25, 2026",
+    "team1": "Kosovo/Romania/Slovakia/Turkey",
+    "team2": "USA",
+    "venue": "Los Angeles Stadium",
+    "time": "TBD",
+    "group": "Group D",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 60,
+    "date": "2026-06-25",
+    "displayDate": "Thursday, June 25, 2026",
+    "team1": "Paraguay",
+    "team2": "Australia",
+    "venue": "San Francisco Bay Area Stadium",
+    "time": "TBD",
+    "group": "Group D",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 61,
+    "date": "2026-06-26",
+    "displayDate": "Friday, June 26, 2026",
+    "team1": "Norway",
+    "team2": "France",
+    "venue": "Boston Stadium",
+    "time": "TBD",
+    "group": "Group I",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 62,
+    "date": "2026-06-26",
+    "displayDate": "Friday, June 26, 2026",
+    "team1": "Senegal",
+    "team2": "Bolivia/Iraq/Suriname",
+    "venue": "Toronto Stadium",
+    "time": "TBD",
+    "group": "Group I",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 63,
+    "date": "2026-06-26",
+    "displayDate": "Friday, June 26, 2026",
+    "team1": "Egypt",
+    "team2": "Iran",
+    "venue": "Seattle Stadium",
+    "time": "TBD",
+    "group": "Group G",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 64,
+    "date": "2026-06-26",
+    "displayDate": "Friday, June 26, 2026",
+    "team1": "New Zealand",
+    "team2": "Belgium",
+    "venue": "BC Place Vancouver",
+    "time": "TBD",
+    "group": "Group G",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 65,
+    "date": "2026-06-26",
+    "displayDate": "Friday, June 26, 2026",
+    "team1": "Cape Verde",
+    "team2": "Saudi Arabia",
+    "venue": "Houston Stadium",
+    "time": "TBD",
+    "group": "Group H",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 66,
+    "date": "2026-06-26",
+    "displayDate": "Friday, June 26, 2026",
+    "team1": "Uruguay",
+    "team2": "Spain",
+    "venue": "Estadio Guadalajara",
+    "time": "TBD",
+    "group": "Group H",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 67,
+    "date": "2026-06-27",
+    "displayDate": "Saturday, June 27, 2026",
+    "team1": "Panama",
+    "team2": "England",
+    "venue": "New York New Jersey Stadium",
+    "time": "TBD",
+    "group": "Group L",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 68,
+    "date": "2026-06-27",
+    "displayDate": "Saturday, June 27, 2026",
+    "team1": "Croatia",
+    "team2": "Ghana",
+    "venue": "Philadelphia Stadium",
+    "time": "TBD",
+    "group": "Group L",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 69,
+    "date": "2026-06-27",
+    "displayDate": "Saturday, June 27, 2026",
+    "team1": "Algeria",
+    "team2": "Austria",
+    "venue": "Kansas City Stadium",
+    "time": "TBD",
+    "group": "Group J",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 70,
+    "date": "2026-06-27",
+    "displayDate": "Saturday, June 27, 2026",
+    "team1": "Jordan",
+    "team2": "Argentina",
+    "venue": "Dallas Stadium",
+    "time": "TBD",
+    "group": "Group J",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 71,
+    "date": "2026-06-27",
+    "displayDate": "Saturday, June 27, 2026",
+    "team1": "Colombia",
+    "team2": "Portugal",
+    "venue": "Miami Stadium",
+    "time": "TBD",
+    "group": "Group K",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 72,
+    "date": "2026-06-27",
+    "displayDate": "Saturday, June 27, 2026",
+    "team1": "DR Congo/Jamaica/New Caledonia",
+    "team2": "Uzbekistan",
+    "venue": "Atlanta Stadium",
+    "time": "TBD",
+    "group": "Group K",
+    "round": "Group Stage",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "group"
+  },
+  {
+    "id": 73,
+    "date": "2026-06-28",
+    "displayDate": "Sunday, June 28, 2026",
+    "team1": "Group A runners-up",
+    "team2": "Group B runners-up",
+    "venue": "Los Angeles Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 74,
+    "date": "2026-06-29",
+    "displayDate": "Monday, June 29, 2026",
+    "team1": "Group E winners",
+    "team2": "Group A/B/C/D/F third place",
+    "venue": "Boston Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 75,
+    "date": "2026-06-29",
+    "displayDate": "Monday, June 29, 2026",
+    "team1": "Group F winners",
+    "team2": "Group C runners-up",
+    "venue": "Estadio Monterrey",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 76,
+    "date": "2026-06-29",
+    "displayDate": "Monday, June 29, 2026",
+    "team1": "Group C winners",
+    "team2": "Group F runners-up",
+    "venue": "Houston Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 77,
+    "date": "2026-06-30",
+    "displayDate": "Tuesday, June 30, 2026",
+    "team1": "Group I winners",
+    "team2": "Group C/D/F/G/H third place",
+    "venue": "New York New Jersey Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 78,
+    "date": "2026-06-30",
+    "displayDate": "Tuesday, June 30, 2026",
+    "team1": "Group E runners up",
+    "team2": "Group I runners-up",
+    "venue": "Dallas Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 79,
+    "date": "2026-06-30",
+    "displayDate": "Tuesday, June 30, 2026",
+    "team1": "Group A winners",
+    "team2": "Group C/E/F/H/I third place",
+    "venue": "Mexico City Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 80,
+    "date": "2026-07-01",
+    "displayDate": "Wednesday, July 1, 2026",
+    "team1": "Group L winners",
+    "team2": "Group E/H/I/J/K third place",
+    "venue": "Atlanta Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 81,
+    "date": "2026-07-01",
+    "displayDate": "Wednesday, July 1, 2026",
+    "team1": "Group D winners",
+    "team2": "Group B/E/F/I/J third place",
+    "venue": "San Francisco Bay Area Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 82,
+    "date": "2026-07-01",
+    "displayDate": "Wednesday, July 1, 2026",
+    "team1": "Group G winners",
+    "team2": "Group A/E/H/I/J third place",
+    "venue": "Seattle Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 83,
+    "date": "2026-07-02",
+    "displayDate": "Thursday, July 2, 2026",
+    "team1": "Group K runners-up",
+    "team2": "Group L runners-up",
+    "venue": "Toronto Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 84,
+    "date": "2026-07-02",
+    "displayDate": "Thursday, July 2, 2026",
+    "team1": "Group H winners",
+    "team2": "Group J runners-up",
+    "venue": "Los Angeles Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 85,
+    "date": "2026-07-02",
+    "displayDate": "Thursday, July 2, 2026",
+    "team1": "Group B winners",
+    "team2": "Group E/F/G/I/J third place",
+    "venue": "BC Place Vancouver",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 86,
+    "date": "2026-07-03",
+    "displayDate": "Friday, July 3, 2026",
+    "team1": "Group J winners",
+    "team2": "Group H runners-up",
+    "venue": "Miami Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 87,
+    "date": "2026-07-03",
+    "displayDate": "Friday, July 3, 2026",
+    "team1": "Group K winners",
+    "team2": "Group D/E/I/J/L third place",
+    "venue": "Kansas City Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 88,
+    "date": "2026-07-03",
+    "displayDate": "Friday, July 3, 2026",
+    "team1": "Group D runners-up",
+    "team2": "Group G runners-up",
+    "venue": "Dallas Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 32",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round32"
+  },
+  {
+    "id": 89,
+    "date": "2026-07-04",
+    "displayDate": "Saturday, July 4, 2026",
+    "team1": "Winner match 74",
+    "team2": "Winner match 77",
+    "venue": "Philadelphia Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 16",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round16"
+  },
+  {
+    "id": 90,
+    "date": "2026-07-04",
+    "displayDate": "Saturday, July 4, 2026",
+    "team1": "Winner match 73",
+    "team2": "Winner match 75",
+    "venue": "Houston Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 16",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round16"
+  },
+  {
+    "id": 91,
+    "date": "2026-07-05",
+    "displayDate": "Sunday, July 5, 2026",
+    "team1": "Winner match 76",
+    "team2": "Winner match 78",
+    "venue": "New York New Jersey Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 16",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round16"
+  },
+  {
+    "id": 92,
+    "date": "2026-07-05",
+    "displayDate": "Sunday, July 5, 2026",
+    "team1": "Winner match 79",
+    "team2": "Winner match 80",
+    "venue": "Mexico City Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 16",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round16"
+  },
+  {
+    "id": 93,
+    "date": "2026-07-06",
+    "displayDate": "Monday, July 6, 2026",
+    "team1": "Winner match 83",
+    "team2": "Winner match 84",
+    "venue": "Dallas Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 16",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round16"
+  },
+  {
+    "id": 94,
+    "date": "2026-07-06",
+    "displayDate": "Monday, July 6, 2026",
+    "team1": "Winner match 81",
+    "team2": "Winner match 82",
+    "venue": "Seattle Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 16",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round16"
+  },
+  {
+    "id": 95,
+    "date": "2026-07-07",
+    "displayDate": "Tuesday, July 7, 2026",
+    "team1": "Winner match 86",
+    "team2": "Winner match 88",
+    "venue": "Atlanta Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 16",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round16"
+  },
+  {
+    "id": 96,
+    "date": "2026-07-07",
+    "displayDate": "Tuesday, July 7, 2026",
+    "team1": "Winner match 85",
+    "team2": "Winner match 87",
+    "venue": "BC Place Vancouver",
+    "time": "TBD",
+    "group": null,
+    "round": "Round of 16",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "round16"
+  },
+  {
+    "id": 97,
+    "date": "2026-07-09",
+    "displayDate": "Thursday, July 9, 2026",
+    "team1": "Winner match 89",
+    "team2": "Winner match 90",
+    "venue": "Boston Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Quarter-finals",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "quarter"
+  },
+  {
+    "id": 98,
+    "date": "2026-07-10",
+    "displayDate": "Friday, July 10, 2026",
+    "team1": "Winner match 93",
+    "team2": "Winner match 94",
+    "venue": "Los Angeles Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Quarter-finals",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "quarter"
+  },
+  {
+    "id": 99,
+    "date": "2026-07-11",
+    "displayDate": "Saturday, July 11, 2026",
+    "team1": "Winner match 91",
+    "team2": "Winner match 92",
+    "venue": "Miami Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Quarter-finals",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "quarter"
+  },
+  {
+    "id": 100,
+    "date": "2026-07-11",
+    "displayDate": "Saturday, July 11, 2026",
+    "team1": "Winner match 95",
+    "team2": "Winner match 96",
+    "venue": "Kansas City Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Quarter-finals",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "quarter"
+  },
+  {
+    "id": 101,
+    "date": "2026-07-14",
+    "displayDate": "Tuesday, July 14, 2026",
+    "team1": "Winner match 97",
+    "team2": "Winner match 98",
+    "venue": "Dallas Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Semi-finals",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "semi"
+  },
+  {
+    "id": 102,
+    "date": "2026-07-15",
+    "displayDate": "Wednesday, July 15, 2026",
+    "team1": "Winner match 99",
+    "team2": "Winner match 100",
+    "venue": "Atlanta Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Semi-finals",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "semi"
+  },
+  {
+    "id": 103,
+    "date": "2026-07-18",
+    "displayDate": "Saturday, July 18, 2026",
+    "team1": "Runner-up match 101",
+    "team2": "Runner-up match 102",
+    "venue": "Miami Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Bronze Final",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "bronze"
+  },
+  {
+    "id": 104,
+    "date": "2026-07-19",
+    "displayDate": "Sunday, July 19, 2026",
+    "team1": "Winner match 101",
+    "team2": "Winner match 102",
+    "venue": "New York New Jersey Stadium",
+    "time": "TBD",
+    "group": null,
+    "round": "Final",
+    "status": "scheduled",
+    "score": {
+      "team1": null,
+      "team2": null
+    },
+    "stage": "final"
+  }
+]

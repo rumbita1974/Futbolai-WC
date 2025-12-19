@@ -1,420 +1,391 @@
-'use client';
+// components/GroupStageFixtures.tsx
+import React, { useState, useContext, useEffect, useMemo } from 'react';
+import { Match } from '../types';
+import { TeamContext } from '../context/TeamContext';
+import Link from 'next/link';
 
-import { useTeam } from '@/context/TeamContext';
-import { useEffect, useState } from 'react';
-
-interface Match {
-  id: string;
-  date: string;
-  time: string;
-  group: string;
-  team1: string;
-  team2: string;
-  venue: string;
-  city: string;
-  team1Code: string;
-  team2Code: string;
+interface GroupStageFixturesProps {
+  matches?: Match[];
+  onTeamClick?: (teamName: string) => void;
 }
 
-const GROUPS = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+const GroupStageFixtures: React.FC<GroupStageFixturesProps> = ({ matches: propMatches, onTeamClick }) => {
+  const teamContext = useContext(TeamContext);
+  
+  // Safe access to context values
+  const filteredMatches = teamContext?.filteredMatches || [];
+  const matches = propMatches || filteredMatches;
+  
+  const [expandedGroups, setExpandedGroups] = useState<Set<string>>(new Set());
+  const [selectedDate, setSelectedDate] = useState<string>('all');
+  const [selectedStage, setSelectedStage] = useState<string>('all');
+  const [selectedVenue, setSelectedVenue] = useState<string>('all');
+  const [selectedGroup, setSelectedGroup] = useState<string>('all');
 
-// Team data for the 2026 World Cup
-const TEAMS_DATA: Record<string, any> = {
-  "Argentina": {
-    id: "argentina",
-    name: "Argentina",
-    countryCode: "AR",
-    group: "A",
-    fifaRanking: 1,
-    venueCity: ["New York/New Jersey", "Miami", "Boston"],
-    players: [],
-    flagUrl: "https://flagcdn.com/w320/ar.png",
-    summary: "Defending champions, led by Lionel Messi"
-  },
-  "United States": {
-    id: "usa",
-    name: "United States",
-    countryCode: "US",
-    group: "A",
-    fifaRanking: 11,
-    venueCity: ["Los Angeles", "Seattle", "Boston", "Kansas City", "Atlanta", "Philadelphia"],
-    players: [],
-    flagUrl: "https://flagcdn.com/w320/us.png",
-    summary: "Co-hosts, emerging football nation"
-  },
-  "Canada": {
-    id: "canada",
-    name: "Canada",
-    countryCode: "CA",
-    group: "A",
-    fifaRanking: 45,
-    venueCity: ["Toronto", "Vancouver"],
-    players: [],
-    flagUrl: "https://flagcdn.com/w320/ca.png",
-    summary: "Co-hosts, improving national team"
-  },
-  "Brazil": {
-    id: "brazil",
-    name: "Brazil",
-    countryCode: "BR",
-    group: "B",
-    fifaRanking: 5,
-    venueCity: ["Miami", "Atlanta", "Los Angeles"],
-    players: [],
-    flagUrl: "https://flagcdn.com/w320/br.png",
-    summary: "5-time champions, always favorites"
-  },
-  "Germany": {
-    id: "germany",
-    name: "Germany",
-    countryCode: "DE",
-    group: "B",
-    fifaRanking: 16,
-    venueCity: ["Philadelphia", "Toronto", "New York/New Jersey"],
-    players: [],
-    flagUrl: "https://flagcdn.com/w320/de.png",
-    summary: "4-time champions, rebuilding phase"
-  },
-  "France": {
-    id: "france",
-    name: "France",
-    countryCode: "FR",
-    group: "C",
-    fifaRanking: 2,
-    venueCity: ["Miami", "Atlanta", "Houston"],
-    players: [],
-    flagUrl: "https://flagcdn.com/w320/fr.png",
-    summary: "2018 champions, stacked squad"
-  },
-  "Spain": {
-    id: "spain",
-    name: "Spain",
-    countryCode: "ES",
-    group: "C",
-    fifaRanking: 8,
-    venueCity: ["Boston", "New York/New Jersey", "Philadelphia"],
-    players: [],
-    flagUrl: "https://flagcdn.com/w320/es.png",
-    summary: "2010 champions, technical masters"
-  },
-  "England": {
-    id: "england",
-    name: "England",
-    countryCode: "GB-ENG",
-    group: "D",
-    fifaRanking: 3,
-    venueCity: ["Los Angeles", "Seattle", "San Francisco Bay Area"],
-    players: [],
-    flagUrl: "https://flagcdn.com/w320/gb-eng.png",
-    summary: "1966 champions, strong young team"
-  },
-  "Portugal": {
-    id: "portugal",
-    name: "Portugal",
-    countryCode: "PT",
-    group: "D",
-    fifaRanking: 6,
-    venueCity: ["New York/New Jersey", "Boston", "Philadelphia"],
-    players: [],
-    flagUrl: "https://flagcdn.com/w320/pt.png",
-    summary: "Led by Cristiano Ronaldo, European champions"
-  },
-  "Italy": {
-    id: "italy",
-    name: "Italy",
-    countryCode: "IT",
-    group: "E",
-    fifaRanking: 9,
-    venueCity: ["Miami", "Atlanta", "Dallas"],
-    players: [],
-    flagUrl: "https://flagcdn.com/w320/it.png",
-    summary: "4-time champions, missed 2022"
-  },
-  "Netherlands": {
-    id: "netherlands",
-    name: "Netherlands",
-    countryCode: "NL",
-    group: "E",
-    fifaRanking: 7,
-    venueCity: ["Seattle", "Vancouver", "Toronto"],
-    players: [],
-    flagUrl: "https://flagcdn.com/w320/nl.png",
-    summary: "Total football, always contenders"
-  },
-  "Mexico": {
-    id: "mexico",
-    name: "Mexico",
-    countryCode: "MX",
-    group: "F",
-    fifaRanking: 12,
-    venueCity: ["Mexico City", "Guadalajara", "Monterrey", "Los Angeles"],
-    players: [],
-    flagUrl: "https://flagcdn.com/w320/mx.png",
-    summary: "Co-hosts, passionate fan base"
-  }
-};
+  // Get unique dates for filter - FIXED: Use Array.from
+  const matchDates = useMemo(() => {
+    const dates = matches.map(match => match.date);
+    return Array.from(new Set(dates)).sort();
+  }, [matches]);
 
-export default function GroupStageFixtures() {
-  const { setSelectedTeam, setVenueCities, worldCupMatches } = useTeam();
-  const [selectedGroup, setSelectedGroup] = useState('A');
-  const [matches, setMatches] = useState<Match[]>([]);
+  // Get unique venues for filter
+  const venues = useMemo(() => {
+    const venueList = matches.map(match => match.venue);
+    return ['all', ...Array.from(new Set(venueList)).sort()];
+  }, [matches]);
 
+  // Get unique stages for filter
+  const stages = useMemo(() => {
+    const stageList = matches.map(match => match.stage);
+    return ['all', ...Array.from(new Set(stageList)).sort()];
+  }, [matches]);
+
+  // Get unique groups from matches using Array.from
+  const availableGroups = Array.from(new Set(matches.map(match => match.group))).sort();
+
+  // Filter matches based on selected filters
+  const filteredMatchesList = useMemo(() => {
+    return matches.filter(match => {
+      if (selectedDate !== 'all' && match.date !== selectedDate) return false;
+      if (selectedStage !== 'all' && match.stage !== selectedStage) return false;
+      if (selectedVenue !== 'all' && match.venue !== selectedVenue) return false;
+      if (selectedGroup !== 'all' && match.group !== selectedGroup) return false;
+      return true;
+    });
+  }, [matches, selectedDate, selectedStage, selectedVenue, selectedGroup]);
+
+  // Group matches by group
+  const matchesByGroup = useMemo(() => {
+    const groups: Record<string, Match[]> = {};
+    filteredMatchesList.forEach(match => {
+      if (!groups[match.group]) {
+        groups[match.group] = [];
+      }
+      groups[match.group].push(match);
+    });
+    return groups;
+  }, [filteredMatchesList]);
+
+  const toggleGroup = (group: string) => {
+    const newExpandedGroups = new Set(expandedGroups);
+    if (newExpandedGroups.has(group)) {
+      newExpandedGroups.delete(group);
+    } else {
+      newExpandedGroups.add(group);
+    }
+    setExpandedGroups(newExpandedGroups);
+  };
+
+  // Expand all groups on mount
   useEffect(() => {
-    // Use the matches from context (could be parsed from your schedule file)
-    setMatches(worldCupMatches);
-  }, [worldCupMatches]);
+    const allGroups = new Set(availableGroups);
+    setExpandedGroups(allGroups);
+  }, [availableGroups]);
 
-  const handleTeamClick = (teamName: string) => {
-    const teamData = TEAMS_DATA[teamName as keyof typeof TEAMS_DATA];
-    if (teamData) {
-      setSelectedTeam(teamData);
-      setVenueCities(teamData.venueCity);
-      
-      // Scroll to team details panel
-      setTimeout(() => {
-        const teamPanel = document.getElementById('team-details-panel');
-        if (teamPanel) {
-          teamPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-        }
-      }, 100);
+  // Reset filters when matches change
+  useEffect(() => {
+    setSelectedDate('all');
+    setSelectedStage('all');
+    setSelectedVenue('all');
+    setSelectedGroup('all');
+  }, [matches]);
+
+  const formatDate = (dateStr: string) => {
+    try {
+      const date = new Date(dateStr);
+      return date.toLocaleDateString('en-US', {
+        weekday: 'short',
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric'
+      });
+    } catch (error) {
+      return dateStr;
     }
   };
 
-  const filteredMatches = matches.filter(match => match.group === selectedGroup);
+  const formatTime = (timeStr: string) => {
+    try {
+      const [hours, minutes] = timeStr.split(':');
+      const hour = parseInt(hours, 10);
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const formattedHour = hour % 12 || 12;
+      return `${formattedHour}:${minutes} ${ampm}`;
+    } catch (error) {
+      return timeStr;
+    }
+  };
 
-  // Get unique groups from matches
-  const availableGroups = [...new Set(matches.map(match => match.group))].sort();
+  const getMatchStatus = (match: Match) => {
+    if (match.status === 'completed') {
+      return (
+        <span className="px-2 py-1 bg-red-100 text-red-800 text-xs font-semibold rounded">
+          FT: {match.homeScore} - {match.awayScore}
+        </span>
+      );
+    } else if (match.status === 'in_progress') {
+      return (
+        <span className="px-2 py-1 bg-yellow-100 text-yellow-800 text-xs font-semibold rounded animate-pulse">
+          LIVE
+        </span>
+      );
+    } else {
+      return (
+        <span className="px-2 py-1 bg-gray-100 text-gray-800 text-xs font-semibold rounded">
+          {formatTime(match.time)}
+        </span>
+      );
+    }
+  };
+
+  // Helper function to create team slug
+  const createTeamSlug = (teamName: string) => {
+    return teamName.toLowerCase().replace(/\s+/g, '-').replace(/[^\w-]/g, '');
+  };
+
+  if (!teamContext) {
+    return (
+      <div className="bg-white rounded-lg shadow p-6 text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+        <p className="mt-4 text-gray-600">Loading fixtures...</p>
+      </div>
+    );
+  }
 
   return (
-    <div>
-      {/* Tournament Overview */}
-      <div className="mb-8 p-4 bg-gradient-to-r from-blue-50 to-green-50 rounded-xl border border-blue-200">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-          <div>
-            <h3 className="text-lg font-bold text-gray-800 mb-2">Tournament Format</h3>
-            <p className="text-sm text-gray-600">
-              48 teams in 12 groups of 4 • Top 2 from each group advance • Round of 32 knockout stage
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            <div className="bg-white px-3 py-2 rounded-lg border">
-              <div className="text-xs text-gray-500">Matches</div>
-              <div className="font-bold text-blue-600">104</div>
-            </div>
-            <div className="bg-white px-3 py-2 rounded-lg border">
-              <div className="text-xs text-gray-500">Venues</div>
-              <div className="font-bold text-green-600">16</div>
-            </div>
-            <div className="bg-white px-3 py-2 rounded-lg border">
-              <div className="text-xs text-gray-500">Duration</div>
-              <div className="font-bold text-purple-600">39 days</div>
-            </div>
-          </div>
+    <div className="bg-white rounded-lg shadow p-4 md:p-6">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+        <h2 className="text-2xl font-bold text-gray-800">Group Stage Fixtures</h2>
+        <div className="flex flex-wrap gap-2">
+          <select
+            value={selectedDate}
+            onChange={(e) => setSelectedDate(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">All Dates</option>
+            {matchDates.map(date => (
+              <option key={date} value={date}>
+                {formatDate(date)}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={selectedStage}
+            onChange={(e) => setSelectedStage(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">All Stages</option>
+            {stages.map(stage => (
+              <option key={stage} value={stage}>
+                {stage}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={selectedVenue}
+            onChange={(e) => setSelectedVenue(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">All Venues</option>
+            {venues.map(venue => (
+              <option key={venue} value={venue}>
+                {venue}
+              </option>
+            ))}
+          </select>
+
+          <select
+            value={selectedGroup}
+            onChange={(e) => setSelectedGroup(e.target.value)}
+            className="px-3 py-2 border border-gray-300 rounded-md text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="all">All Groups</option>
+            {availableGroups.map(group => (
+              <option key={group} value={group}>
+                Group {group}
+              </option>
+            ))}
+          </select>
         </div>
       </div>
 
-      {/* Group Selector */}
-      <div className="mb-6">
-        <div className="flex items-center justify-between mb-3">
-          <h3 className="text-lg font-semibold text-gray-700">Select Group</h3>
-          <span className="text-sm text-gray-500">
-            Showing {filteredMatches.length} matches
-          </span>
-        </div>
-        <div className="grid grid-cols-4 md:grid-cols-8 gap-2">
-          {GROUPS.map(group => (
-            <button
-              key={group}
-              onClick={() => setSelectedGroup(group)}
-              className={`
-                py-3 rounded-lg font-medium transition-all duration-300
-                ${selectedGroup === group
-                  ? 'bg-gradient-to-r from-blue-600 to-blue-500 text-white shadow-lg transform scale-105'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200 hover:scale-102'
-                }
-                ${availableGroups.includes(group) ? '' : 'opacity-40 cursor-not-allowed'}
-              `}
-              disabled={!availableGroups.includes(group)}
-            >
-              <div className="text-sm font-bold">GROUP</div>
-              <div className="text-xl font-black">{group}</div>
-            </button>
-          ))}
-        </div>
+      {/* Group Toggle Buttons */}
+      <div className="flex flex-wrap gap-2 mb-6">
+        {availableGroups.map(group => (
+          <button
+            key={group}
+            onClick={() => toggleGroup(group)}
+            className={`px-4 py-2 rounded-md font-medium text-sm transition-colors ${
+              expandedGroups.has(group)
+                ? 'bg-blue-600 text-white'
+                : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+            }`}
+          >
+            Group {group} {expandedGroups.has(group) ? '▲' : '▼'}
+          </button>
+        ))}
+        <button
+          onClick={() => {
+            if (expandedGroups.size === availableGroups.length) {
+              setExpandedGroups(new Set());
+            } else {
+              setExpandedGroups(new Set(availableGroups));
+            }
+          }}
+          className="px-4 py-2 bg-gray-800 text-white rounded-md font-medium text-sm hover:bg-gray-700"
+        >
+          {expandedGroups.size === availableGroups.length ? 'Collapse All' : 'Expand All'}
+        </button>
       </div>
 
-      {/* Matches Table */}
-      <div className="bg-white rounded-xl border border-gray-200 overflow-hidden shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="bg-gradient-to-r from-blue-50 to-green-50">
-                <th className="py-4 px-4 text-left text-gray-600 font-semibold text-sm">
-                  <div>Date & Time</div>
-                  <div className="font-normal text-xs text-gray-500">(Local Time)</div>
-                </th>
-                <th className="py-4 px-4 text-left text-gray-600 font-semibold">Match</th>
-                <th className="py-4 px-4 text-left text-gray-600 font-semibold">Venue</th>
-                <th className="py-4 px-4 text-left text-gray-600 font-semibold">Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredMatches.length > 0 ? (
-                filteredMatches.map((match, index) => (
-                  <tr 
-                    key={match.id} 
-                    className={`border-b hover:bg-blue-50/50 transition-colors ${
-                      index % 2 === 0 ? 'bg-gray-50/50' : 'bg-white'
-                    }`}
-                  >
-                    <td className="py-4 px-4">
-                      <div className="font-medium text-gray-800">{match.date}</div>
-                      <div className="text-sm text-gray-500">{match.time}</div>
-                      <div className="mt-1">
-                        <span className="inline-block px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-medium">
-                          Group {match.group}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="space-y-2">
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-6 flex-shrink-0">
-                            <img
-                              src={`https://flagcdn.com/w40/${match.team1Code.toLowerCase()}.png`}
-                              alt={match.team1}
-                              className="w-full h-full object-cover rounded shadow-sm"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = `https://via.placeholder.com/40x30/cccccc/666666?text=${match.team1Code}`;
-                              }}
-                            />
-                          </div>
-                          <button
-                            onClick={() => handleTeamClick(match.team1)}
-                            className="text-left font-medium text-blue-700 hover:text-blue-900 hover:underline transition-colors text-lg"
-                          >
-                            {match.team1}
-                          </button>
-                        </div>
-                        <div className="text-center text-gray-400 font-bold text-sm">VS</div>
-                        <div className="flex items-center space-x-3">
-                          <div className="w-8 h-6 flex-shrink-0">
-                            <img
-                              src={`https://flagcdn.com/w40/${match.team2Code.toLowerCase()}.png`}
-                              alt={match.team2}
-                              className="w-full h-full object-cover rounded shadow-sm"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement;
-                                target.src = `https://via.placeholder.com/40x30/cccccc/666666?text=${match.team2Code}`;
-                              }}
-                            />
-                          </div>
-                          <button
-                            onClick={() => handleTeamClick(match.team2)}
-                            className="text-left font-medium text-blue-700 hover:text-blue-900 hover:underline transition-colors text-lg"
-                          >
-                            {match.team2}
-                          </button>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="font-medium text-gray-800">{match.venue}</div>
-                      <div className="text-sm text-gray-600 mt-1">{match.city}</div>
-                    </td>
-                    <td className="py-4 px-4">
-                      <div className="flex flex-col gap-2">
-                        <button
-                          onClick={() => handleTeamClick(match.team1)}
-                          className="px-3 py-2 bg-blue-100 hover:bg-blue-200 text-blue-700 rounded-lg text-sm font-medium transition-colors"
-                        >
-                          View {match.team1}
-                        </button>
-                        <button
-                          onClick={() => handleTeamClick(match.team2)}
-                          className="px-3 py-2 bg-green-100 hover:bg-green-200 text-green-700 rounded-lg text-sm font-medium transition-colors"
-                        >
-                          View {match.team2}
-                        </button>
-                      </div>
-                    </td>
-                  </tr>
-                ))
-              ) : (
-                <tr>
-                  <td colSpan={4} className="py-12 px-4 text-center">
-                    <div className="text-gray-500">
-                      <div className="text-4xl mb-4">📅</div>
-                      <p className="text-lg font-medium mb-2">No matches scheduled yet</p>
-                      <p className="text-sm">Match schedule will be updated as the tournament approaches</p>
-                    </div>
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+      {/* Group Display */}
+      <div className="space-y-8">
+        {availableGroups
+          .filter(group => selectedGroup === 'all' || group === selectedGroup)
+          .map(group => {
+            const groupMatches = matchesByGroup[group] || [];
+            const isExpanded = expandedGroups.has(group);
 
-        {/* Table Footer */}
-        <div className="px-6 py-4 bg-gray-50 border-t">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="text-sm text-gray-600">
-              <span className="font-medium">Click on team names</span> to view detailed roster, player information, and venue details.
-            </div>
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-blue-500 rounded-full"></div>
-                <span className="text-sm text-gray-600">Clickable team</span>
-              </div>
-              <div className="flex items-center space-x-2">
-                <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse-dot"></div>
-                <span className="text-sm text-gray-600">Selected team venue</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+            if (groupMatches.length === 0) return null;
 
-      {/* Groups Summary */}
-      <div className="mt-8">
-        <h3 className="text-lg font-semibold text-gray-700 mb-4">Group Stage Overview</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {['A', 'B', 'C', 'D'].map(group => {
-            const groupTeams = Object.values(TEAMS_DATA).filter(team => team.group === group);
             return (
-              <div key={group} className="bg-white border border-gray-200 rounded-xl p-4 shadow-sm">
-                <div className="flex justify-between items-center mb-3">
-                  <h4 className="font-bold text-gray-800">Group {group}</h4>
-                  <span className="px-2 py-1 bg-blue-100 text-blue-700 rounded text-xs font-bold">
-                    {groupTeams.length} teams
-                  </span>
+              <div key={group} className="border border-gray-200 rounded-lg overflow-hidden">
+                <div
+                  className="bg-gradient-to-r from-gray-50 to-gray-100 p-4 cursor-pointer"
+                  onClick={() => toggleGroup(group)}
+                >
+                  <div className="flex justify-between items-center">
+                    <h3 className="text-xl font-bold text-gray-800">Group {group}</h3>
+                    <span className="text-gray-600">
+                      {groupMatches.length} match{groupMatches.length !== 1 ? 'es' : ''}
+                      <span className="ml-2">{isExpanded ? '▲' : '▼'}</span>
+                    </span>
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  {groupTeams.map(team => (
-                    <div key={team.id} className="flex items-center justify-between">
-                      <div className="flex items-center space-x-2">
-                        <img
-                          src={team.flagUrl}
-                          alt={`${team.name} flag`}
-                          className="w-6 h-4 object-cover rounded"
-                        />
-                        <span className="text-sm font-medium">{team.name}</span>
-                      </div>
-                      <button
-                        onClick={() => handleTeamClick(team.name)}
-                        className="text-xs px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded"
-                      >
-                        View
-                      </button>
+
+                {isExpanded && (
+                  <div className="p-4 bg-white">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                      {groupMatches.map((match, index) => (
+                        <div
+                          key={`${match.homeTeam}-${match.awayTeam}-${index}`}
+                          className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow"
+                        >
+                          <div className="flex justify-between items-center mb-3">
+                            <span className="text-sm font-medium text-gray-500">
+                              {formatDate(match.date)}
+                            </span>
+                            {getMatchStatus(match)}
+                          </div>
+
+                          <div className="mb-2">
+                            <div className="flex justify-between items-center mb-1">
+                              <div className="flex items-center">
+                                <Link 
+                                  href={`/teams/${createTeamSlug(match.homeTeam)}`}
+                                  onClick={() => onTeamClick && onTeamClick(match.homeTeam)}
+                                  className="font-medium text-blue-600 hover:text-blue-800 hover:underline flex items-center"
+                                >
+                                  {match.homeTeam}
+                                  <svg 
+                                    className="w-4 h-4 ml-1 opacity-70" 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path 
+                                      strokeLinecap="round" 
+                                      strokeLinejoin="round" 
+                                      strokeWidth={2} 
+                                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                                    />
+                                  </svg>
+                                </Link>
+                              </div>
+                              {match.status === 'completed' && (
+                                <span className="font-bold text-lg">
+                                  {match.homeScore}
+                                </span>
+                              )}
+                            </div>
+
+                            <div className="flex justify-between items-center">
+                              <div className="flex items-center">
+                                <Link 
+                                  href={`/teams/${createTeamSlug(match.awayTeam)}`}
+                                  onClick={() => onTeamClick && onTeamClick(match.awayTeam)}
+                                  className="font-medium text-blue-600 hover:text-blue-800 hover:underline flex items-center"
+                                >
+                                  {match.awayTeam}
+                                  <svg 
+                                    className="w-4 h-4 ml-1 opacity-70" 
+                                    fill="none" 
+                                    stroke="currentColor" 
+                                    viewBox="0 0 24 24"
+                                  >
+                                    <path 
+                                      strokeLinecap="round" 
+                                      strokeLinejoin="round" 
+                                      strokeWidth={2} 
+                                      d="M13 7l5 5m0 0l-5 5m5-5H6"
+                                    />
+                                  </svg>
+                                </Link>
+                              </div>
+                              {match.status === 'completed' && (
+                                <span className="font-bold text-lg">
+                                  {match.awayScore}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          <div className="pt-3 border-t border-gray-100">
+                            <div className="flex justify-between text-sm text-gray-600">
+                              <div className="flex items-center">
+                                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clipRule="evenodd" />
+                                </svg>
+                                {match.venue}
+                              </div>
+                              <div className="flex items-center">
+                                <svg className="w-4 h-4 mr-1" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clipRule="evenodd" />
+                                </svg>
+                                {formatTime(match.time)}
+                              </div>
+                            </div>
+                            <div className="mt-2">
+                              <span className="inline-block px-2 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded">
+                                {match.stage}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
                     </div>
-                  ))}
-                </div>
+                  </div>
+                )}
               </div>
             );
           })}
-        </div>
       </div>
+
+      {/* No matches message */}
+      {filteredMatchesList.length === 0 && (
+        <div className="text-center py-12">
+          <svg className="w-16 h-16 mx-auto text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <h3 className="mt-4 text-lg font-medium text-gray-700">No matches found</h3>
+          <p className="mt-2 text-gray-500">Try adjusting your filters to find matches.</p>
+        </div>
+      )}
     </div>
   );
-}
+};
+
+export default GroupStageFixtures;
+

@@ -1,397 +1,312 @@
-'use client';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/router';
+import Layout from '../components/Layout';
+import { groqService } from '../services/groqService';
+import { worldCupGroups, worldCupMatches } from '../data/worldCupData';
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+// Add these imports at the top if needed
+import LoadingSpinner from '../components/LoadingSpinner';
+import ErrorDisplay from '../components/ErrorDisplay';
 
-export default function WorldCup2026() {
+const WorldCup2026 = () => {
   const router = useRouter();
-  const [activeSection, setActiveSection] = useState('fixtures');
-  const [selectedTeam, setSelectedTeam] = useState('Argentina');
+  const [activeTab, setActiveTab] = useState('overview');
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [groups, setGroups] = useState<any[]>([]);
+  const [matches, setMatches] = useState<any[]>([]);
+  const [lastUpdated, setLastUpdated] = useState<string>('');
 
-  const handleTeamClick = (teamName: string) => {
-    setSelectedTeam(teamName);
-    setActiveSection('teams');
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchWorldCupData();
+  }, []);
+
+  const fetchWorldCupData = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      // Fetch live data from Wikipedia via GROQ
+      const [groupsData, matchesData] = await Promise.all([
+        groqService.getWorldCupGroups(),
+        groqService.getMatchSchedule()
+      ]);
+      
+      setGroups(groupsData.groups || []);
+      setMatches(matchesData.matches || []);
+      setLastUpdated(new Date().toISOString());
+      
+      // Fallback to static data if API returns empty
+      if (!groupsData.groups || groupsData.groups.length === 0) {
+        setGroups(worldCupGroups);
+        console.log('Using fallback static data for groups');
+      }
+      
+      if (!matchesData.matches || matchesData.matches.length === 0) {
+        setMatches(worldCupMatches);
+        console.log('Using fallback static data for matches');
+      }
+      
+    } catch (err: any) {
+      console.error('Error fetching World Cup data:', err);
+      setError('Failed to load World Cup data. Please try again.');
+      
+      // Fallback to static data
+      setGroups(worldCupGroups);
+      setMatches(worldCupMatches);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
+  const handleTabChange = (tab: string) => {
+    setActiveTab(tab);
+  };
+
+  const handleTeamClick = (teamName: string) => {
+    router.push(`/team/${encodeURIComponent(teamName)}`);
+  };
+
+  const handleRefresh = () => {
+    fetchWorldCupData();
+  };
+
+  // Render loading state
+  if (isLoading && groups.length === 0) {
+    return (
+      <Layout title="World Cup 2026">
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+            <p className="mt-4 text-gray-600">Fetching latest World Cup data from Wikipedia...</p>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
+  // Render error state
+  if (error && groups.length === 0) {
+    return (
+      <Layout title="World Cup 2026 - Error">
+        <div className="min-h-screen flex items-center justify-center">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-8 max-w-md">
+            <h2 className="text-xl font-semibold text-red-800 mb-4">Error Loading Data</h2>
+            <p className="text-red-600 mb-6">{error}</p>
+            <button
+              onClick={handleRefresh}
+              className="bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700"
+            >
+              Try Again
+            </button>
+          </div>
+        </div>
+      </Layout>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-gray-100">
-      {/* Animated Background Elements */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-green-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-        <div className="absolute bottom-1/4 left-1/2 w-64 h-64 bg-yellow-100 rounded-full mix-blend-multiply filter blur-3xl opacity-20 animate-pulse"></div>
-      </div>
-
-      {/* Header */}
-      <header className="relative overflow-hidden bg-gradient-to-r from-blue-900 via-blue-800 to-green-900 text-white shadow-2xl">
-        <div className="relative container mx-auto px-4 py-10">
-          {/* Back to Home Button */}
-          <button
-            onClick={() => router.push('/')}
-            className="mb-8 px-5 py-2.5 bg-white/20 hover:bg-white/30 text-white rounded-xl transition-all duration-300 flex items-center gap-2 backdrop-blur-sm hover:scale-105 hover:shadow-lg"
-          >
-            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-            </svg>
-            Back to FutbolAI
-          </button>
-          
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-10">
-            <div className="flex-1">
-              <div className="flex items-center gap-5 mb-6">
-                <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 p-4 rounded-2xl shadow-2xl">
-                  <span className="text-5xl">🏆</span>
-                </div>
-                <div>
-                  <h1 className="text-5xl md:text-6xl font-bold mb-3 bg-gradient-to-r from-white to-yellow-200 bg-clip-text text-transparent">
-                    2026 FIFA World Cup
-                  </h1>
-                  <p className="text-2xl opacity-95">North America • June 11 - July 19, 2026</p>
-                </div>
+    <Layout title="FIFA World Cup 2026">
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-900 to-red-800 text-white py-12">
+          <div className="container mx-auto px-4">
+            <h1 className="text-4xl md:text-5xl font-bold mb-4">FIFA World Cup 2026</h1>
+            <p className="text-xl mb-6">USA • Canada • Mexico</p>
+            <div className="flex flex-wrap gap-4">
+              <div className="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3">
+                <p>June 11 - July 19, 2026</p>
               </div>
-              
-              <div className="flex flex-wrap gap-4 mt-8">
-                <div className="bg-white/20 backdrop-blur-sm px-5 py-3 rounded-xl">
-                  <div className="text-2xl font-bold">48</div>
-                  <div className="text-sm opacity-90">Teams</div>
-                </div>
-                <div className="bg-white/20 backdrop-blur-sm px-5 py-3 rounded-xl">
-                  <div className="text-2xl font-bold">16</div>
-                  <div className="text-sm opacity-90">Host Cities</div>
-                </div>
-                <div className="bg-white/20 backdrop-blur-sm px-5 py-3 rounded-xl">
-                  <div className="text-2xl font-bold">104</div>
-                  <div className="text-sm opacity-90">Matches</div>
-                </div>
-                <div className="bg-white/20 backdrop-blur-sm px-5 py-3 rounded-xl">
-                  <div className="text-2xl font-bold">3</div>
-                  <div className="text-sm opacity-90">Host Countries</div>
-                </div>
+              <div className="bg-white/20 backdrop-blur-sm rounded-lg px-6 py-3">
+                <p>48 Teams • 16 Host Cities</p>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Main Content */}
+        <div className="container mx-auto px-4 py-8">
+          {/* Tab Navigation */}
+          <div className="flex flex-wrap gap-2 mb-8">
+            <button
+              onClick={() => handleTabChange('overview')}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                activeTab === 'overview'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              Overview
+            </button>
+            <button
+              onClick={() => handleTabChange('groups')}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                activeTab === 'groups'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              Groups
+            </button>
+            <button
+              onClick={() => handleTabChange('matches')}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                activeTab === 'matches'
+                  ? 'bg-blue-600 text-white'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              Match Schedule
+            </button>
             
-            <div className="lg:text-right">
-              <div className="inline-block p-6 bg-gradient-to-br from-yellow-500 via-yellow-400 to-yellow-600 rounded-2xl shadow-2xl transform hover:scale-105 transition-transform duration-300">
-                <div className="text-sm font-medium mb-1 opacity-90">Tournament Dates</div>
-                <div className="text-3xl font-bold">Jun 11 - Jul 19</div>
-                <div className="text-sm opacity-90 mt-2">39 days of football</div>
-              </div>
+            <div className="ml-auto flex items-center gap-4">
+              <button
+                onClick={handleRefresh}
+                disabled={isLoading}
+                className="px-4 py-2 bg-green-600 hover:bg-green-700 disabled:bg-green-400 text-white rounded-lg font-semibold flex items-center gap-2"
+              >
+                {isLoading ? (
+                  <>
+                    <span className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></span>
+                    Loading...
+                  </>
+                ) : (
+                  '↻ Refresh Data'
+                )}
+              </button>
+              {lastUpdated && (
+                <div className="text-sm text-gray-500">
+                  Updated: {new Date(lastUpdated).toLocaleTimeString()}
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      </header>
 
-      {/* Navigation Tabs */}
-      <div className="sticky top-0 z-40 bg-white/90 backdrop-blur-lg border-b shadow-lg">
-        <div className="container mx-auto px-4">
-          <div className="flex overflow-x-auto">
-            <button
-              onClick={() => setActiveSection('fixtures')}
-              className={`px-8 py-5 font-bold whitespace-nowrap transition-all duration-300 flex items-center gap-3 ${
-                activeSection === 'fixtures'
-                  ? 'text-blue-600 border-b-4 border-blue-600 bg-gradient-to-r from-blue-50 to-white'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              <span className="text-2xl">📅</span>
-              <span>Group Stage</span>
-            </button>
-            <button
-              onClick={() => setActiveSection('teams')}
-              className={`px-8 py-5 font-bold whitespace-nowrap transition-all duration-300 flex items-center gap-3 ${
-                activeSection === 'teams'
-                  ? 'text-blue-600 border-b-4 border-blue-600 bg-gradient-to-r from-blue-50 to-white'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              <span className="text-2xl">👥</span>
-              <span>Team Rosters</span>
-            </button>
-            <button
-              onClick={() => setActiveSection('venues')}
-              className={`px-8 py-5 font-bold whitespace-nowrap transition-all duration-300 flex items-center gap-3 ${
-                activeSection === 'venues'
-                  ? 'text-blue-600 border-b-4 border-blue-600 bg-gradient-to-r from-blue-50 to-white'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-              }`}
-            >
-              <span className="text-2xl">🗺️</span>
-              <span>Host Cities</span>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-10 relative z-10">
-        
-        {/* FIXTURES SECTION */}
-        {activeSection === 'fixtures' && (
-          <div className="space-y-8 animate-fadeIn">
-            <div className="text-center mb-10">
-              <h2 className="text-4xl font-bold text-gray-800 mb-4">Group Stage Fixtures</h2>
-              <p className="text-gray-600 text-xl max-w-3xl mx-auto">
-                Explore the complete match schedule. Click on any team name to dive into their roster and tournament journey.
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              {/* Group A */}
-              <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-200">
-                <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-4 rounded-xl mb-6">
-                  <h3 className="text-2xl font-bold text-center">Group A</h3>
+          {/* Tab Content */}
+          <div className="bg-white rounded-xl shadow-lg p-6">
+            {activeTab === 'overview' && (
+              <div>
+                <h2 className="text-2xl font-bold mb-6">Tournament Overview</h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                  <div className="bg-blue-50 p-6 rounded-lg">
+                    <h3 className="font-semibold text-blue-800 mb-2">Host Nations</h3>
+                    <p className="text-blue-600">United States, Canada, Mexico</p>
+                  </div>
+                  <div className="bg-green-50 p-6 rounded-lg">
+                    <h3 className="font-semibold text-green-800 mb-2">Teams</h3>
+                    <p className="text-green-600">48 teams (expanded format)</p>
+                  </div>
+                  <div className="bg-purple-50 p-6 rounded-lg">
+                    <h3 className="font-semibold text-purple-800 mb-2">Matches</h3>
+                    <p className="text-purple-600">104 matches total</p>
+                  </div>
                 </div>
                 
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">🇺🇸</span>
-                      <button 
-                        onClick={() => handleTeamClick('USA')}
-                        className="font-bold text-gray-800 hover:text-blue-600 transition-colors"
-                      >
-                        USA
-                      </button>
-                    </div>
-                    <div className="font-bold text-blue-600">0 pts</div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">🇲🇽</span>
-                      <button 
-                        onClick={() => handleTeamClick('Mexico')}
-                        className="font-bold text-gray-800 hover:text-blue-600 transition-colors"
-                      >
-                        Mexico
-                      </button>
-                    </div>
-                    <div className="font-bold text-blue-600">0 pts</div>
-                  </div>
-                  
-                  <div className="text-center mt-6">
-                    <div className="text-gray-500 mb-2">Match 1: Jun 11, 20:00</div>
-                    <div className="font-bold text-lg">USA vs Mexico</div>
-                    <div className="text-gray-600">MetLife Stadium</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Group B */}
-              <div className="bg-white rounded-2xl shadow-xl p-6 border border-gray-200">
-                <div className="bg-gradient-to-r from-green-600 to-green-700 text-white p-4 rounded-xl mb-6">
-                  <h3 className="text-2xl font-bold text-center">Group B</h3>
-                </div>
-                
-                <div className="space-y-4">
-                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">🇦🇷</span>
-                      <button 
-                        onClick={() => handleTeamClick('Argentina')}
-                        className="font-bold text-gray-800 hover:text-blue-600 transition-colors"
-                      >
-                        Argentina
-                      </button>
-                    </div>
-                    <div className="font-bold text-blue-600">0 pts</div>
-                  </div>
-                  
-                  <div className="flex justify-between items-center p-3 bg-gray-50 rounded-lg">
-                    <div className="flex items-center gap-3">
-                      <span className="text-2xl">🇧🇷</span>
-                      <button 
-                        onClick={() => handleTeamClick('Brazil')}
-                        className="font-bold text-gray-800 hover:text-blue-600 transition-colors"
-                      >
-                        Brazil
-                      </button>
-                    </div>
-                    <div className="font-bold text-blue-600">0 pts</div>
-                  </div>
-                  
-                  <div className="text-center mt-6">
-                    <div className="text-gray-500 mb-2">Match 1: Jun 12, 18:00</div>
-                    <div className="font-bold text-lg">Argentina vs Brazil</div>
-                    <div className="text-gray-600">Estadio Azteca</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* TEAMS SECTION */}
-        {activeSection === 'teams' && (
-          <div className="space-y-8 animate-fadeIn">
-            <div className="text-center mb-10">
-              <h2 className="text-4xl font-bold text-gray-800 mb-4">Team Rosters & Details</h2>
-              <p className="text-gray-600 text-xl max-w-3xl mx-auto">
-                {selectedTeam 
-                  ? `Exploring ${selectedTeam}'s squad, players, and tournament information`
-                  : 'Select a team to explore their complete roster and statistics'
-                }
-              </p>
-            </div>
-
-            {selectedTeam && (
-              <div className="bg-white rounded-2xl shadow-xl p-8">
-                <div className="flex items-center gap-6 mb-8">
-                  <div className="text-6xl">
-                    {selectedTeam === 'Argentina' && '🇦🇷'}
-                    {selectedTeam === 'Brazil' && '🇧🇷'}
-                    {selectedTeam === 'USA' && '🇺🇸'}
-                    {selectedTeam === 'Mexico' && '🇲🇽'}
-                    {selectedTeam === 'France' && '🇫🇷'}
-                  </div>
-                  <div>
-                    <h3 className="text-3xl font-bold text-gray-800">{selectedTeam}</h3>
-                    <div className="flex gap-4 mt-3">
-                      <span className="bg-blue-100 text-blue-700 px-3 py-1 rounded-full">Group {selectedTeam === 'USA' || selectedTeam === 'Mexico' ? 'A' : 'B'}</span>
-                      <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full">FIFA Rank: #{selectedTeam === 'Argentina' ? '1' : selectedTeam === 'Brazil' ? '3' : '15+'}</span>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                  <div className="md:col-span-2">
-                    <h4 className="text-xl font-bold mb-4">Key Players</h4>
-                    <div className="space-y-4">
-                      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                        <div>
-                          <div className="font-bold">Lionel Messi</div>
-                          <div className="text-gray-600">Forward • 36 years</div>
-                        </div>
-                        <div className="text-blue-600 font-medium">Inter Miami</div>
-                      </div>
-                      <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
-                        <div>
-                          <div className="font-bold">Julian Alvarez</div>
-                          <div className="text-gray-600">Forward • 24 years</div>
-                        </div>
-                        <div className="text-blue-600 font-medium">Manchester City</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div>
-                    <h4 className="text-xl font-bold mb-4">Team Stats</h4>
-                    <div className="space-y-4">
-                      <div className="bg-blue-50 p-4 rounded-xl">
-                        <div className="text-sm text-gray-600">World Cup Wins</div>
-                        <div className="text-2xl font-bold text-blue-700">
-                          {selectedTeam === 'Argentina' ? '3' : selectedTeam === 'Brazil' ? '5' : '0'}
-                        </div>
-                      </div>
-                      <div className="bg-green-50 p-4 rounded-xl">
-                        <div className="text-sm text-gray-600">Coach</div>
-                        <div className="text-xl font-bold text-green-700">
-                          {selectedTeam === 'Argentina' ? 'Lionel Scaloni' : selectedTeam === 'Brazil' ? 'Dorival Júnior' : 'To be announced'}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+                <div className="prose max-w-none">
+                  <p className="text-gray-700">
+                    The 2026 FIFA World Cup will be the 23rd FIFA World Cup, hosted jointly by 
+                    16 cities across the United States, Canada, and Mexico. This will be the 
+                    first World Cup to feature 48 teams, expanded from 32.
+                  </p>
                 </div>
               </div>
             )}
+
+            {activeTab === 'groups' && (
+              <div>
+                <h2 className="text-2xl font-bold mb-6">Group Stage</h2>
+                {isLoading ? (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading group data...</p>
+                  </div>
+                ) : groups.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    {groups.map((group: any) => (
+                      <div key={group.name} className="border rounded-lg p-4 hover:shadow-md transition-shadow">
+                        <h3 className="font-bold text-lg mb-4 text-center">{group.name}</h3>
+                        <div className="space-y-3">
+                          {group.teams?.map((team: any, index: number) => (
+                            <div 
+                              key={index} 
+                              className="flex items-center justify-between p-2 hover:bg-gray-50 rounded cursor-pointer"
+                              onClick={() => handleTeamClick(team.name)}
+                            >
+                              <div className="flex items-center gap-3">
+                                <span className="text-xl">{team.flagEmoji || '🏴'}</span>
+                                <span className="font-medium">{team.name}</span>
+                              </div>
+                              <span className="text-gray-500 text-sm">{team.fifaCode}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500">No group data available yet.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {activeTab === 'matches' && (
+              <div>
+                <h2 className="text-2xl font-bold mb-6">Match Schedule</h2>
+                {isLoading ? (
+                  <div className="text-center py-12">
+                    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>
+                    <p className="mt-4 text-gray-600">Loading match schedule...</p>
+                  </div>
+                ) : matches.length > 0 ? (
+                  <div className="space-y-4">
+                    {matches.slice(0, 10).map((match: any, index: number) => (
+                      <div key={index} className="border rounded-lg p-4 hover:bg-gray-50">
+                        <div className="flex justify-between items-center">
+                          <div>
+                            <span className="font-semibold">{match.date}</span>
+                            <span className="ml-4 text-gray-600">{match.stage}</span>
+                          </div>
+                          <span className="text-gray-500">{match.venue}</span>
+                        </div>
+                        <div className="mt-2 flex items-center justify-center gap-4">
+                          <span 
+                            className="font-bold cursor-pointer hover:text-blue-600"
+                            onClick={() => handleTeamClick(match.team1)}
+                          >
+                            {match.team1}
+                          </span>
+                          <span className="text-gray-400">vs</span>
+                          <span 
+                            className="font-bold cursor-pointer hover:text-blue-600"
+                            onClick={() => handleTeamClick(match.team2)}
+                          >
+                            {match.team2}
+                          </span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-gray-500">No match data available yet.</p>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        )}
 
-        {/* VENUES SECTION */}
-        {activeSection === 'venues' && (
-          <div className="space-y-8 animate-fadeIn">
-            <div className="text-center mb-10">
-              <h2 className="text-4xl font-bold text-gray-800 mb-4">Host Cities & Stadiums</h2>
-              <p className="text-gray-600 text-xl max-w-3xl mx-auto">
-                {selectedTeam 
-                  ? `Venues where ${selectedTeam} will play`
-                  : 'Discover the 16 spectacular venues across North America'
-                }
-              </p>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {/* Venue 1 */}
-              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
-                <div className="bg-gradient-to-r from-blue-500 to-blue-600 p-6">
-                  <h3 className="text-2xl font-bold text-white">MetLife Stadium</h3>
-                  <p className="text-blue-100">New York/New Jersey, USA</p>
-                </div>
-                <div className="p-6">
-                  <div className="mb-4">
-                    <div className="text-sm text-gray-600">Capacity</div>
-                    <div className="text-xl font-bold">82,500</div>
-                  </div>
-                  <div className="mb-4">
-                    <div className="text-sm text-gray-600">Matches</div>
-                    <div className="text-xl font-bold">6</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-600 mb-2">Featured Teams</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className={`px-3 py-1 rounded-full text-sm ${selectedTeam === 'USA' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'}`}>USA</span>
-                      <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">England</span>
-                      <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Portugal</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Venue 2 */}
-              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
-                <div className="bg-gradient-to-r from-green-500 to-green-600 p-6">
-                  <h3 className="text-2xl font-bold text-white">Estadio Azteca</h3>
-                  <p className="text-green-100">Mexico City, Mexico</p>
-                </div>
-                <div className="p-6">
-                  <div className="mb-4">
-                    <div className="text-sm text-gray-600">Capacity</div>
-                    <div className="text-xl font-bold">87,523</div>
-                  </div>
-                  <div className="mb-4">
-                    <div className="text-sm text-gray-600">Matches</div>
-                    <div className="text-xl font-bold">5</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-600 mb-2">Featured Teams</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className={`px-3 py-1 rounded-full text-sm ${selectedTeam === 'Mexico' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'}`}>Mexico</span>
-                      <span className={`px-3 py-1 rounded-full text-sm ${selectedTeam === 'Argentina' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'}`}>Argentina</span>
-                      <span className={`px-3 py-1 rounded-full text-sm ${selectedTeam === 'Brazil' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'}`}>Brazil</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Venue 3 */}
-              <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-200">
-                <div className="bg-gradient-to-r from-purple-500 to-purple-600 p-6">
-                  <h3 className="text-2xl font-bold text-white">SoFi Stadium</h3>
-                  <p className="text-purple-100">Los Angeles, USA</p>
-                </div>
-                <div className="p-6">
-                  <div className="mb-4">
-                    <div className="text-sm text-gray-600">Capacity</div>
-                    <div className="text-xl font-bold">70,240</div>
-                  </div>
-                  <div className="mb-4">
-                    <div className="text-sm text-gray-600">Matches</div>
-                    <div className="text-xl font-bold">8</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-gray-600 mb-2">Featured Teams</div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className={`px-3 py-1 rounded-full text-sm ${selectedTeam === 'USA' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-700'}`}>USA</span>
-                      <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">France</span>
-                      <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm">Spain</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
+          {/* Data Source Info */}
+          <div className="mt-8 text-center text-gray-500 text-sm">
+            <p>Data powered by GROQ AI fetching current information from Wikipedia</p>
+            <p className="mt-1">Click "Refresh Data" to get the latest updates</p>
           </div>
-        )}
-      </main>
-    </div>
+        </div>
+      </div>
+    </Layout>
   );
-}
+};
+
+export default WorldCup2026;

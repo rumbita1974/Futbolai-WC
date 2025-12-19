@@ -1,3 +1,4 @@
+// components/TeamDetailsPanel.tsx
 'use client';
 
 import { useTeam } from '@/context/TeamContext';
@@ -162,10 +163,11 @@ async function fetchTeamDataFromWikipedia(countryName: string): Promise<Player[]
 }
 
 export default function TeamDetailsPanel() {
-  const { selectedTeam, loading, setLoading } = useTeam();
+  const { selectedTeam, isLoading } = useTeam();
   const [players, setPlayers] = useState<Player[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [selectedPosition, setSelectedPosition] = useState<string>('all');
+  const [loadingPlayers, setLoadingPlayers] = useState(false);
 
   useEffect(() => {
     async function loadTeamData() {
@@ -174,7 +176,7 @@ export default function TeamDetailsPanel() {
         return;
       }
 
-      setLoading(true);
+      setLoadingPlayers(true);
       setError(null);
       setSelectedPosition('all');
       
@@ -185,20 +187,20 @@ export default function TeamDetailsPanel() {
         setError('Failed to load team data. Please try again.');
         console.error(err);
       } finally {
-        setLoading(false);
+        setLoadingPlayers(false);
       }
     }
 
     loadTeamData();
-  }, [selectedTeam, setLoading]);
+  }, [selectedTeam]);
 
   // Filter players by position
   const filteredPlayers = selectedPosition === 'all' 
     ? players 
     : players.filter(player => player.position.toLowerCase().includes(selectedPosition.toLowerCase()));
 
-  // Get unique positions
-  const positions = ['all', ...new Set(players.map(p => p.position))];
+  // Get unique positions - FIXED: Use Array.from instead of spread
+  const positions = ['all', ...Array.from(new Set(players.map(p => p.position)))];
 
   // Calculate stats
   const averageAge = players.length > 0 
@@ -249,28 +251,18 @@ export default function TeamDetailsPanel() {
                 Group {selectedTeam.group}
               </span>
               <span className="px-3 py-1 bg-gray-100 text-gray-700 rounded-full text-sm font-medium">
-                FIFA Ranking: #{selectedTeam.fifaRanking}
+                FIFA Ranking: #{selectedTeam.fifaRanking || 'N/A'}
               </span>
-              {selectedTeam.summary && (
-                <span className="px-3 py-1 bg-green-100 text-green-800 rounded-full text-sm font-medium">
-                  {selectedTeam.summary}
-                </span>
-              )}
             </div>
           </div>
         </div>
         
         <div className="text-right">
-          <h4 className="font-semibold text-gray-700 mb-2">📍 Host Cities for Matches</h4>
+          <h4 className="font-semibold text-gray-700 mb-2">📍 Host City</h4>
           <div className="flex flex-wrap gap-2 justify-end">
-            {selectedTeam.venueCity.map((city, index) => (
-              <span
-                key={index}
-                className="px-3 py-1 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 rounded-full text-sm font-medium border border-green-200"
-              >
-                {city}
-              </span>
-            ))}
+            <span className="px-3 py-1 bg-gradient-to-r from-green-100 to-emerald-100 text-green-800 rounded-full text-sm font-medium border border-green-200">
+              {selectedTeam.venue || 'N/A'}
+            </span>
           </div>
         </div>
       </div>
@@ -303,7 +295,7 @@ export default function TeamDetailsPanel() {
       </div>
 
       {/* Loading State */}
-      {loading && (
+      {(loadingPlayers || isLoading) && (
         <div className="text-center py-12">
           <div className="inline-block animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
           <p className="text-gray-600">Loading team roster from Wikipedia...</p>
@@ -325,7 +317,7 @@ export default function TeamDetailsPanel() {
       )}
 
       {/* Player Roster */}
-      {!loading && players.length > 0 && (
+      {!loadingPlayers && !isLoading && players.length > 0 && (
         <>
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <h3 className="text-xl font-bold text-gray-800">Team Roster</h3>
@@ -511,7 +503,7 @@ export default function TeamDetailsPanel() {
       )}
 
       {/* Empty Roster State */}
-      {!loading && players.length === 0 && !error && (
+      {!loadingPlayers && !isLoading && players.length === 0 && !error && (
         <div className="text-center py-12">
           <div className="inline-block p-4 bg-gradient-to-br from-gray-100 to-gray-200 rounded-full mb-4">
             <svg className="w-16 h-16 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -534,3 +526,4 @@ export default function TeamDetailsPanel() {
     </div>
   );
 }
+

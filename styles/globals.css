@@ -1,3 +1,118 @@
-@tailwind base; 
-@tailwind components; 
-@tailwind utilities; 
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+/* Custom animations */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fadeIn {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* ICON SIZE FIXES - Added by fix-icons.ps1 */
+.icon-emoji {
+  display: inline-block;
+  line-height: 1;
+  vertical-align: middle;
+}
+
+.icon-sm {
+  font-size: 14px;
+  width: 16px;
+  height: 16px;
+}
+
+.icon-md {
+  font-size: 16px;
+  width: 20px;
+  height: 20px;
+}
+
+.icon-lg {
+  font-size: 20px;
+  width: 24px;
+  height: 24px;
+}
+
+/* Fix specific oversized icons */
+button .icon-emoji,
+a .icon-emoji {
+  margin-right: 4px;
+}
+
+/* Navigation icons */
+nav button span:first-child {
+  font-size: 1.25rem !important;
+}
+
+/* Search icon */
+[class*="search"] .icon-emoji {
+  font-size: 1rem !important;
+}
+
+/* Match info icons (clock, location) */
+.text-sm .icon-emoji {
+  font-size: 0.875rem !important;
+}
+
+/* Emergency override for huge icons */
+span:has(> :is(??,??,???,??,??,??,?,??,?,??,??)) {
+  font-size: 1rem !important;
+  line-height: 1 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* Arrow icons specifically */
+svg[class*="arrow"],
+path[d*="M13 7l5 5"],
+path[d*="M19 9l-7 7-7-7"] {
+  width: 16px !important;
+  height: 16px !important;
+}
