@@ -3,17 +3,9 @@
 @tailwind utilities;
 
 :root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+  --foreground-rgb: 255, 255, 255;
+  --background-start-rgb: 15, 23, 42;
+  --background-end-rgb: 0, 0, 0;
 }
 
 body {
@@ -26,31 +18,30 @@ body {
     rgb(var(--background-start-rgb));
 }
 
-/* Custom styles */
-.loading-spinner {
-  border: 3px solid #f3f3f3;
-  border-top: 3px solid #3498db;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  animation: spin 1s linear infinite;
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 10px;
 }
 
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+::-webkit-scrollbar-track {
+  background: #1f2937;
 }
 
-.match-card {
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+::-webkit-scrollbar-thumb {
+  background: #4b5563;
+  border-radius: 5px;
 }
 
-.match-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+::-webkit-scrollbar-thumb:hover {
+  background: #6b7280;
 }
 
-.flag-image {
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
+/* Gradient text */
+.gradient-text {
+  @apply bg-gradient-to-r from-blue-400 to-green-400 bg-clip-text text-transparent;
+}
+
+/* Smooth transitions */
+* {
+  transition: background-color 0.2s ease, border-color 0.2s ease;
 }
