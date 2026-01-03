@@ -2,24 +2,32 @@
 
 import { useState, useEffect } from 'react';
 import { searchYouTubeHighlights, YouTubeVideo } from '@/services/youtubeService';
-import { Player, Team } from '@/services/groqService';
+import { Player, Team, needsDataVerification, getDataSourceInfo } from '@/services/groqService';
+import { getDataCurrencyBadge } from '@/services/dataEnhancerService';
 
 interface EnhancedResultsProps {
   players: Player[];
   teams: Team[];
   youtubeQuery: string;
   searchTerm: string;
+  _metadata?: any;
 }
 
 export default function EnhancedSearchResults({
   players,
   teams,
   youtubeQuery,
-  searchTerm
+  searchTerm,
+  _metadata
 }: EnhancedResultsProps) {
   const [youtubeVideos, setYoutubeVideos] = useState<YouTubeVideo[]>([]);
   const [loadingVideos, setLoadingVideos] = useState(false);
   const [videoError, setVideoError] = useState<string | null>(null);
+  
+  // Get data currency badge
+  const dataBadge = getDataCurrencyBadge(_metadata);
+  const needsVerification = needsDataVerification({ players, teams, youtubeQuery, _metadata } as any);
+  const dataSourceInfo = getDataSourceInfo({ players, teams, youtubeQuery, _metadata } as any);
 
   // Fetch YouTube videos when component mounts or query changes
   useEffect(() => {
@@ -47,7 +55,7 @@ export default function EnhancedSearchResults({
   // Helper component for stat boxes
   const StatBox = ({ label, value }: { label: string; value?: number }) => (
     <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl text-center border border-gray-200 hover:shadow-md transition">
-      <div className="text-2xl font-bold text-gray-800">{value !== undefined ? value : '-'}</div>
+      <div className="text-2xl font-bold text-gray-800">{value !== undefined && value !== null ? value : '-'}</div>
       <div className="text-sm text-gray-600 mt-1">{label}</div>
     </div>
   );
@@ -69,14 +77,17 @@ export default function EnhancedSearchResults({
       yellow: 'border-yellow-200 bg-yellow-50 hover:bg-yellow-100'
     };
 
+    const colorIcons = {
+      blue: '🔵',
+      green: '🟢',
+      purple: '🟣',
+      yellow: '🟡'
+    };
+
     return (
-      <div className={`border rounded-lg p-4 ${colorClasses[color]} transition`}>
+      <div className={`border rounded-lg p-4 ${colorClasses[color]} transition h-full`}>
         <h4 className="font-semibold text-gray-800 mb-3 flex items-center">
-          <span className={`w-3 h-3 rounded-full mr-2 ${
-            color === 'blue' ? 'bg-blue-500' :
-            color === 'green' ? 'bg-green-500' :
-            color === 'purple' ? 'bg-purple-500' : 'bg-yellow-500'
-          }`}></span>
+          <span className="mr-2">{colorIcons[color]}</span>
           {title}
         </h4>
         {achievements.length > 0 ? (
@@ -84,7 +95,7 @@ export default function EnhancedSearchResults({
             {achievements.map((achievement, idx) => (
               <li key={idx} className="text-sm text-gray-700 flex items-start">
                 <span className="text-gray-400 mr-2">•</span>
-                {achievement}
+                <span>{achievement}</span>
               </li>
             ))}
           </ul>
@@ -95,27 +106,218 @@ export default function EnhancedSearchResults({
     );
   };
 
+  // Wikipedia Source Badge Component
+  const WikipediaSourceBadge = ({ team, player }: { team?: Team; player?: Player }) => {
+    const source = team?._source || (player as any)?._source;
+    const lastVerified = team?._lastVerified || (player as any)?._lastVerified;
+    const wikiSummary = team?._wikiSummary || (player as any)?._wikiSummary;
+    const updateReason = team?._updateReason;
+    
+    if (!source) return null;
+    
+    const isCriticalUpdate = source.includes('Critical');
+    const isWikipedia = source.includes('Wikipedia');
+    
+    if (!isCriticalUpdate && !isWikipedia) return null;
+    
+    return (
+      <div className={`mt-3 p-3 rounded-lg border ${
+        isCriticalUpdate 
+          ? 'bg-purple-50 border-purple-200' 
+          : 'bg-blue-50 border-blue-200'
+      }`}>
+        <div className="flex items-start">
+          <div className="flex-shrink-0 pt-1">
+            {isCriticalUpdate ? (
+              <span className="text-purple-600 text-lg">🔧</span>
+            ) : (
+              <span className="text-blue-600 text-lg">🌐</span>
+            )}
+          </div>
+          <div className="ml-3 flex-1">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+              <div>
+                <span className={`text-xs font-medium px-2 py-1 rounded ${
+                  isCriticalUpdate 
+                    ? 'bg-purple-100 text-purple-800' 
+                    : 'bg-blue-100 text-blue-800'
+                }`}>
+                  {source}
+                </span>
+                {updateReason && (
+                  <p className="text-xs text-gray-600 mt-2">{updateReason}</p>
+                )}
+              </div>
+              {lastVerified && (
+                <div className="text-xs text-gray-500 flex items-center">
+                  <span className="hidden sm:inline mr-1">Verified:</span>
+                  {new Date(lastVerified).toLocaleDateString()}
+                </div>
+              )}
+            </div>
+            
+            {wikiSummary && (
+              <p className="text-xs text-gray-600 mt-2 line-clamp-2">
+                {wikiSummary}
+              </p>
+            )}
+            
+            {team?._dataCurrency?.disclaimer && (
+              <p className="text-xs text-gray-500 mt-2">
+                {team._dataCurrency.disclaimer}
+              </p>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  // Data Currency Warning Component
+  const DataCurrencyWarning = () => {
+    if (!_metadata) return null;
+    
+    const badgeColors = {
+      red: 'bg-red-100 text-red-800 border-red-200',
+      yellow: 'bg-yellow-100 text-yellow-800 border-yellow-200',
+      green: 'bg-green-100 text-green-800 border-green-200',
+      blue: 'bg-blue-100 text-blue-800 border-blue-200'
+    };
+    
+    const badgeColor = badgeColors[dataBadge.color as keyof typeof badgeColors] || badgeColors.blue;
+    
+    return (
+      <div className={`rounded-xl p-4 mb-6 border ${badgeColor}`}>
+        <div className="flex items-start">
+          <div className="flex-shrink-0 text-lg mr-3">{dataBadge.icon}</div>
+          <div className="flex-1">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start gap-2">
+              <div>
+                <h3 className="font-semibold">{dataBadge.text}</h3>
+                <p className="text-sm mt-1 opacity-90">{dataBadge.details}</p>
+              </div>
+              {_metadata.enhancedAt && (
+                <div className="text-sm opacity-75 flex items-center">
+                  <span className="hidden sm:inline mr-1">•</span>
+                  {new Date(_metadata.enhancedAt).toLocaleDateString()}
+                </div>
+              )}
+            </div>
+            
+            {_metadata.disclaimer && (
+              <p className="text-sm mt-3 opacity-90 border-t pt-3 border-opacity-30">{_metadata.disclaimer}</p>
+            )}
+            
+            {_metadata.analysis?.suggestions && _metadata.analysis.suggestions.length > 0 && (
+              <div className="mt-3 pt-3 border-t border-opacity-30">
+                <p className="text-xs font-semibold mb-2">Suggestions:</p>
+                <ul className="text-sm space-y-1">
+                  {_metadata.analysis.suggestions.map((suggestion: string, idx: number) => (
+                    <li key={idx} className="flex items-start">
+                      <span className="mr-2">•</span>
+                      {suggestion}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            
+            {_metadata.recommendations && _metadata.recommendations.length > 0 && (
+              <div className="mt-4 pt-3 border-t border-opacity-30">
+                <p className="text-xs font-semibold mb-2">For current information:</p>
+                <div className="flex flex-wrap gap-2">
+                  {_metadata.recommendations.map((rec: string, idx: number) => (
+                    <span key={idx} className="text-xs px-2 py-1 bg-white bg-opacity-50 rounded">
+                      {rec}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+            
+            {_metadata.wikipediaUsage && (
+              <div className="mt-3 pt-3 border-t border-opacity-30">
+                <div className="flex items-center justify-between text-xs">
+                  <span className="font-semibold">Wikipedia Usage:</span>
+                  <div className="flex gap-4">
+                    <span>Queries: {_metadata.wikipediaUsage.queries}</span>
+                    <span>Updates: {_metadata.wikipediaUsage.updates}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   // Format date for YouTube videos
   const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return date.toLocaleDateString('en-US', { 
-      year: 'numeric', 
-      month: 'short', 
-      day: 'numeric' 
-    });
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffTime = Math.abs(now.getTime() - date.getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      
+      if (diffDays <= 7) {
+        return `${diffDays} day${diffDays !== 1 ? 's' : ''} ago`;
+      } else if (diffDays <= 30) {
+        const weeks = Math.floor(diffDays / 7);
+        return `${weeks} week${weeks !== 1 ? 's' : ''} ago`;
+      } else {
+        return date.toLocaleDateString('en-US', { 
+          year: 'numeric', 
+          month: 'short', 
+          day: 'numeric' 
+        });
+      }
+    } catch (e) {
+      return dateString;
+    }
   };
+
+  // Data Source Indicator
+  const DataSourceIndicator = () => (
+    <div className="flex items-center gap-2 text-sm text-gray-600 mb-4">
+      <span className={`px-2 py-1 rounded ${
+        dataSourceInfo.color === 'green' ? 'bg-green-100 text-green-800' :
+        dataSourceInfo.color === 'blue' ? 'bg-blue-100 text-blue-800' :
+        dataSourceInfo.color === 'purple' ? 'bg-purple-100 text-purple-800' :
+        'bg-gray-100 text-gray-800'
+      }`}>
+        {dataSourceInfo.icon} {dataSourceInfo.source}
+      </span>
+      {_metadata?.currentSeason && (
+        <span className="text-gray-500">Season: {_metadata.currentSeason}</span>
+      )}
+    </div>
+  );
 
   return (
     <div className="space-y-8 mt-8 animate-fadeIn">
+      {/* Data Source Indicator */}
+      <DataSourceIndicator />
+      
+      {/* Data Currency Warning */}
+      <DataCurrencyWarning />
+
       {/* Player Results */}
       {players.length > 0 && players.map((player, idx) => (
         <div key={idx} className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-          <div className="p-8">
+          <div className="p-6 sm:p-8">
             {/* Player Header */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
-              <div>
-                <h2 className="text-3xl font-bold text-gray-900">{player.name}</h2>
-                <div className="flex flex-wrap items-center gap-3 mt-3">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-3">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">{player.name}</h2>
+                  {needsVerification && (
+                    <span className="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">
+                      Verify
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-2 mb-4">
                   <span className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
                     {player.position}
                   </span>
@@ -131,10 +333,11 @@ export default function EnhancedSearchResults({
                     </span>
                   )}
                 </div>
+                <WikipediaSourceBadge player={player} />
               </div>
               
               {/* Player Stats Grid */}
-              <div className="mt-6 lg:mt-0 grid grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="mt-6 lg:mt-0 lg:ml-6 grid grid-cols-2 lg:grid-cols-4 gap-3">
                 <StatBox label="Career Goals" value={player.careerGoals} />
                 <StatBox label="Career Assists" value={player.careerAssists} />
                 <StatBox label="Int'l Caps" value={player.internationalAppearances} />
@@ -168,6 +371,11 @@ export default function EnhancedSearchResults({
             <div className="bg-gray-50 rounded-xl p-6">
               <h3 className="text-xl font-bold text-gray-800 mb-3">Career Overview</h3>
               <p className="text-gray-700 leading-relaxed">{player.careerSummary}</p>
+              {player.age && player.age > 35 && (
+                <p className="text-sm text-gray-500 mt-3 italic">
+                  Note: Player age and current team should be verified with latest sources.
+                </p>
+              )}
             </div>
           </div>
         </div>
@@ -176,12 +384,19 @@ export default function EnhancedSearchResults({
       {/* Team Results */}
       {teams.length > 0 && teams.map((team, idx) => (
         <div key={idx} className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-          <div className="p-8">
+          <div className="p-6 sm:p-8">
             {/* Team Header */}
             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center mb-8">
-              <div>
-                <h2 className="text-3xl font-bold text-gray-900">{team.name}</h2>
-                <div className="flex flex-wrap items-center gap-3 mt-3">
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-3">
+                  <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">{team.name}</h2>
+                  {needsVerification && (
+                    <span className="text-xs px-2 py-1 bg-yellow-100 text-yellow-800 rounded-full">
+                      Verify Coach
+                    </span>
+                  )}
+                </div>
+                <div className="flex flex-wrap items-center gap-2 mb-4">
                   <span className={`px-3 py-1 rounded-full text-sm font-medium ${
                     team.type === 'national' 
                       ? 'bg-red-100 text-red-700' 
@@ -198,14 +413,19 @@ export default function EnhancedSearchResults({
                     </span>
                   )}
                   <span className="px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
-                    👨‍🏫 Coach: {team.currentCoach}
+                    👨‍🏫 {team.currentCoach}
                   </span>
                   {team.foundedYear && (
                     <span className="px-3 py-1 bg-yellow-100 text-yellow-700 rounded-full text-sm font-medium">
-                      📅 Founded: {team.foundedYear}
+                      📅 {team.foundedYear}
                     </span>
                   )}
                 </div>
+                <WikipediaSourceBadge team={team} />
+                
+                {team._dataCurrency?.disclaimer && (
+                  <p className="text-xs text-gray-500 mt-2">{team._dataCurrency.disclaimer}</p>
+                )}
               </div>
             </div>
 
@@ -214,7 +434,7 @@ export default function EnhancedSearchResults({
               <h3 className="text-xl font-bold text-gray-800 mb-4 flex items-center">
                 <span className="mr-2">🏅</span> Trophy Cabinet
               </h3>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
                 <AchievementSection 
                   title="World Cup" 
                   achievements={team.majorAchievements.worldCup} 
@@ -232,22 +452,60 @@ export default function EnhancedSearchResults({
                 />
               </div>
             </div>
+            
+            {/* Data Currency Info */}
+            {team._dataCurrency && (
+              <div className="bg-gray-50 rounded-xl p-4 mt-6">
+                <h4 className="font-semibold text-gray-700 mb-2">Data Information</h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-500">Last trained data:</span>
+                    <span className="ml-2 font-medium">{team._dataCurrency.lastTrained || '2024'}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Enhanced:</span>
+                    <span className="ml-2 font-medium">
+                      {team._dataCurrency.enhanced ? 
+                        new Date(team._dataCurrency.enhanced).toLocaleDateString() : 
+                        'No'
+                      }
+                    </span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Updates applied:</span>
+                    <span className="ml-2 font-medium">{team._dataCurrency.updatesApplied?.length || 0}</span>
+                  </div>
+                  <div>
+                    <span className="text-gray-500">Confidence:</span>
+                    <span className={`ml-2 font-medium ${
+                      team._dataCurrency.verification?.confidence === 'high' ? 'text-green-600' :
+                      team._dataCurrency.verification?.confidence === 'medium' ? 'text-yellow-600' :
+                      'text-red-600'
+                    }`}>
+                      {team._dataCurrency.verification?.confidence || 'medium'}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
       ))}
 
       {/* YouTube Highlights Section */}
       <div className="bg-white rounded-2xl shadow-xl overflow-hidden border border-gray-100">
-        <div className="p-8">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="text-2xl font-bold text-gray-800 flex items-center">
-              <span className="mr-3">📺</span> Video Highlights
+        <div className="p-6 sm:p-8">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 gap-4">
+            <div>
+              <h3 className="text-2xl font-bold text-gray-800 flex items-center">
+                <span className="mr-3">📺</span> Video Highlights
+              </h3>
               {youtubeQuery && (
-                <span className="ml-4 text-sm font-normal text-gray-500">
-                  (Search: "{youtubeQuery}")
-                </span>
+                <p className="text-gray-600 mt-1">
+                  Search: <span className="font-medium">"{youtubeQuery}"</span>
+                </p>
               )}
-            </h3>
+            </div>
             <div className="flex items-center">
               {loadingVideos ? (
                 <div className="flex items-center text-gray-500">
@@ -270,7 +528,7 @@ export default function EnhancedSearchResults({
               </p>
             </div>
           ) : loadingVideos ? (
-            <div className="flex justify-center items-center h-64">
+            <div className="flex justify-center items-center h-48">
               <div className="text-center">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
                 <p className="mt-4 text-gray-600">Searching for highlights...</p>
@@ -286,27 +544,30 @@ export default function EnhancedSearchResults({
                     rel="noopener noreferrer"
                     className="block"
                   >
-                    <div className="aspect-video relative overflow-hidden">
+                    <div className="aspect-video relative overflow-hidden bg-gray-100">
                       <img 
                         src={video.thumbnail} 
                         alt={video.title}
                         className="w-full h-full object-cover hover:scale-105 transition duration-300"
+                        onError={(e) => {
+                          (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 100 100"><rect width="100" height="100" fill="%23f3f4f6"/><text x="50" y="50" font-family="Arial" font-size="14" fill="%236b7280" text-anchor="middle" dy=".3em">Video</text></svg>';
+                        }}
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent"></div>
                       <div className="absolute top-2 right-2 bg-red-600 text-white text-xs px-2 py-1 rounded">
                         YouTube
                       </div>
+                      <div className="absolute bottom-2 left-2 text-white text-xs bg-black/60 px-2 py-1 rounded">
+                        {formatDate(video.publishedAt)}
+                      </div>
                     </div>
                     <div className="p-4">
-                      <h4 className="font-semibold text-gray-800 line-clamp-2 mb-2">
+                      <h4 className="font-semibold text-gray-800 line-clamp-2 mb-2 text-sm">
                         {video.title}
                       </h4>
-                      <p className="text-sm text-gray-600 line-clamp-2 mb-3">
-                        {video.description}
-                      </p>
                       <div className="flex justify-between items-center text-xs text-gray-500">
-                        <span>{video.channelTitle}</span>
-                        <span>{formatDate(video.publishedAt)}</span>
+                        <span className="truncate mr-2">{video.channelTitle}</span>
+                        <span className="flex-shrink-0">▶️ Play</span>
                       </div>
                     </div>
                   </a>
@@ -339,6 +600,18 @@ export default function EnhancedSearchResults({
           <p className="text-gray-500 max-w-md mx-auto">
             Try searching for a specific player (e.g., "Cristiano Ronaldo"), team (e.g., "Manchester United"), or tournament.
           </p>
+        </div>
+      )}
+      
+      {/* Metadata Debug (remove in production) */}
+      {process.env.NODE_ENV === 'development' && _metadata && (
+        <div className="mt-8 p-4 bg-gray-900 text-gray-300 rounded-lg text-sm">
+          <details>
+            <summary className="cursor-pointer font-mono">Debug Metadata</summary>
+            <pre className="mt-2 overflow-auto p-2 bg-gray-800 rounded">
+              {JSON.stringify(_metadata, null, 2)}
+            </pre>
+          </details>
         </div>
       )}
     </div>
