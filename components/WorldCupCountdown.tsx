@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useState } from 'react';
 
 export default function WorldCupCountdown() {
@@ -9,8 +11,8 @@ export default function WorldCupCountdown() {
   });
 
   useEffect(() => {
-    // Official tournament start: June 11, 2026
-    const tournamentStart = new Date('2026-06-11T17:00:00Z').getTime(); // 5 PM UTC
+    // Tournament starts June 11, 2026 at 5 PM UTC
+    const tournamentStart = new Date('2026-06-11T17:00:00Z').getTime();
 
     const updateCountdown = () => {
       const now = new Date().getTime();
