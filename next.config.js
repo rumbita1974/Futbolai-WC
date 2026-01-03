@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',  // CRITICAL: Enables static export
-  
-  // Disable image optimization for static export
+  // Disable image optimization if needed
   images: {
     unoptimized: true,
   },
@@ -23,16 +21,16 @@ const nextConfig = {
   // Optional: Add trailing slash for better compatibility
   trailingSlash: false,
   
-  // Optional: Configure redirects (static export compatible)
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/',
-        permanent: true,
-      },
-    ];
-  },
+  // REMOVED: redirects function since it's not needed and causes warnings
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: '/',
+  //       destination: '/',
+  //       permanent: true,
+  //     },
+  //   ];
+  // },
 }
 
 module.exports = nextConfig
