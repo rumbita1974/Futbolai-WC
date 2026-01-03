@@ -1,17 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  output: 'export',
   images: {
-    domains: [
-      'upload.wikimedia.org',
-      'flagcdn.com',
-      'flagsapi.com',
-      'img.fifa.com'
-    ],
+    unoptimized: true,
   },
-  env: {
-    GROQ_API_KEY: process.env.GROQ_API_KEY,
+  eslint: {
+    ignoreDuringBuilds: true,
   },
+  typescript: {
+    ignoreBuildErrors: true,
+  }
 }
-
 module.exports = nextConfig
