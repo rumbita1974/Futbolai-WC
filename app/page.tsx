@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams, useRouter } from 'next/navigation';
 import { searchWithGROQ, Player, Team } from '@/services/groqService';
 import EnhancedSearchResults from '@/components/EnhancedSearchResults';
 
@@ -18,6 +19,54 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'player' | 'team'>('player');
+  const [comingFromGroup, setComingFromGroup] = useState<string | null>(null);
+  
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Check if coming from a group page
+  useEffect(() => {
+    const groupParam = searchParams.get('group');
+    const searchParam = searchParams.get('search');
+    
+    if (groupParam) {
+      setComingFromGroup(groupParam);
+    }
+    
+    // Auto-search if search param is present
+    if (searchParam && !searchQuery) {
+      setSearchQuery(searchParam);
+      // Auto-trigger search after a short delay
+      const timer = setTimeout(() => {
+        handleAutoSearch(searchParam);
+      }, 100);
+      
+      return () => clearTimeout(timer);
+    }
+  }, [searchParams]);
+
+  const handleAutoSearch = async (query: string) => {
+    setLoading(true);
+    setSearchError(null);
+    setSearchResults(null);
+
+    try {
+      console.log('Auto-searching for:', query);
+      const result = await searchWithGROQ(query);
+      console.log('Auto-search result:', result);
+      
+      if (result.error) {
+        setSearchError(result.error);
+      } else {
+        setSearchResults(result);
+      }
+    } catch (err: any) {
+      console.error('Auto-search error:', err);
+      setSearchError('Failed to perform auto-search.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -48,6 +97,14 @@ export default function HomePage() {
     }
   };
 
+  const handleBackToGroup = () => {
+    if (comingFromGroup) {
+      router.push(`/world-cup?group=${comingFromGroup}`);
+    } else {
+      router.push('/world-cup');
+    }
+  };
+
   const exampleSearches = {
     player: [
       { term: 'Lionel Messi', emoji: '🇦🇷' },
@@ -75,32 +132,86 @@ export default function HomePage() {
     handleSearch(fakeEvent);
   };
 
+  // Function to get team flag emoji
+  const getTeamFlag = (teamName: string) => {
+    const flags: Record<string, string> = {
+      'Mexico': '🇲🇽', 'USA': '🇺🇸', 'Canada': '🇨🇦',
+      'Brazil': '🇧🇷', 'Argentina': '🇦🇷', 'Germany': '🇩🇪',
+      'France': '🇫🇷', 'Spain': '🇪🇸', 'England': '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+      'Portugal': '🇵🇹', 'Italy': '🇮🇹', 'Netherlands': '🇳🇱',
+      'Japan': '🇯🇵', 'South Korea': '🇰🇷', 'Australia': '🇦🇺',
+      'Morocco': '🇲🇦', 'Senegal': '🇸🇳', 'Egypt': '🇪🇬',
+      'Uruguay': '🇺🇾', 'Chile': '🇨🇱', 'Colombia': '🇨🇴',
+      'Belgium': '🇧🇪', 'Croatia': '🇭🇷', 'Switzerland': '🇨🇭',
+      'Denmark': '🇩🇰', 'Sweden': '🇸🇪', 'Norway': '🇳🇴'
+    };
+    
+    // Check for exact match first
+    if (flags[teamName]) return flags[teamName];
+    
+    // Check for partial matches
+    for (const [country, flag] of Object.entries(flags)) {
+      if (teamName.includes(country)) return flag;
+    }
+    
+    return '⚽'; // Default football emoji
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-blue-50">
       <div className="max-w-7xl mx-auto px-4 py-8 sm:py-12">
-        {/* Header */}
-        <div className="text-center mb-8 sm:mb-12">
-          <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
-            FutbolAI Explorer
-          </h1>
-          <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
-            AI-powered football intelligence with detailed stats, achievements, and video highlights
-          </p>
-          
-          {/* Feature Badges */}
-          <div className="flex flex-wrap justify-center gap-3 mb-6">
-            <span className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium flex items-center">
-              <span className="mr-1">🤖</span> AI Analysis
-            </span>
-            <span className="px-3 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-medium flex items-center">
-              <span className="mr-1">📊</span> Detailed Stats
-            </span>
-            <span className="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-full text-sm font-medium flex items-center">
-              <span className="mr-1">🏆</span> Achievements
-            </span>
-            <span className="px-3 py-1.5 bg-red-100 text-red-700 rounded-full text-sm font-medium flex items-center">
-              <span className="mr-1">📺</span> Video Highlights
-            </span>
+        {/* Header with Back Button */}
+        <div className="mb-8 sm:mb-12">
+          {comingFromGroup && (
+            <div className="mb-6 bg-gradient-to-r from-blue-50 to-green-50 border border-blue-200 rounded-xl p-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div>
+                  <div className="flex items-center">
+                    <div className="w-10 h-10 bg-gradient-to-r from-blue-600 to-green-500 rounded-xl flex items-center justify-center mr-3">
+                      <span className="text-xl">⚽</span>
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-800">Viewing players from Group {comingFromGroup}</h3>
+                      <p className="text-gray-600 text-sm">You came from World Cup 2026 Group Stage</p>
+                    </div>
+                  </div>
+                </div>
+                <button
+                  onClick={handleBackToGroup}
+                  className="flex items-center justify-center px-4 py-2 bg-gradient-to-r from-blue-600 to-green-500 text-white rounded-lg hover:opacity-90 transition font-medium shadow-sm whitespace-nowrap"
+                >
+                  <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                  </svg>
+                  Back to Group {comingFromGroup}
+                </button>
+              </div>
+            </div>
+          )}
+
+          <div className="text-center">
+            <h1 className="text-4xl sm:text-5xl font-bold text-gray-900 mb-3 sm:mb-4">
+              FutbolAI Explorer
+            </h1>
+            <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8 max-w-3xl mx-auto px-4">
+              AI-powered football intelligence with detailed stats, achievements, and video highlights
+            </p>
+            
+            {/* Feature Badges */}
+            <div className="flex flex-wrap justify-center gap-3 mb-6">
+              <span className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-full text-sm font-medium flex items-center">
+                <span className="mr-1">🤖</span> AI Analysis
+              </span>
+              <span className="px-3 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-medium flex items-center">
+                <span className="mr-1">📊</span> Detailed Stats
+              </span>
+              <span className="px-3 py-1.5 bg-purple-100 text-purple-700 rounded-full text-sm font-medium flex items-center">
+                <span className="mr-1">🏆</span> Achievements
+              </span>
+              <span className="px-3 py-1.5 bg-red-100 text-red-700 rounded-full text-sm font-medium flex items-center">
+                <span className="mr-1">📺</span> Video Highlights
+              </span>
+            </div>
           </div>
         </div>
 

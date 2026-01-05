@@ -1,7 +1,13 @@
-import GroupStageFixtures from "@/components/GroupStageFixtures";
-import WorldCupCountdown from "@/components/WorldCupCountdown";
+'use client';
+
+import { useSearchParams } from 'next/navigation';
+import GroupStageFixtures from '@/components/GroupStageFixtures';
+import WorldCupCountdown from '@/components/WorldCupCountdown';
 
 export default function WorldCupPage() {
+  const searchParams = useSearchParams();
+  const groupParam = searchParams.get('group');
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-900 via-gray-800 to-black text-white">
       {/* Header Section - Mobile Optimized */}
@@ -16,6 +22,13 @@ export default function WorldCupPage() {
             <p className="text-gray-300 text-sm sm:text-base md:text-lg max-w-2xl mx-auto">
               Official group stage schedule with venues and dates across USA, Canada, and Mexico
             </p>
+            
+            {/* Group Navigation Hint */}
+            {groupParam && (
+              <div className="mt-4 inline-flex items-center px-4 py-2 bg-gradient-to-r from-blue-900/40 to-green-900/40 rounded-full border border-blue-700/30">
+                <span className="text-sm text-blue-300">Viewing Group {groupParam}</span>
+              </div>
+            )}
           </div>
 
           {/* Countdown - Mobile Responsive */}
@@ -49,20 +62,25 @@ export default function WorldCupPage() {
         {/* Fixtures Section - Mobile Optimized */}
         <div className="bg-gray-900/30 rounded-2xl p-4 sm:p-6 border border-gray-800 backdrop-blur-sm">
           <div className="mb-6">
-            <h2 className="text-xl sm:text-2xl font-bold text-white mb-2">
-              Group Stage Fixtures
-            </h2>
-            <p className="text-gray-400 text-sm sm:text-base">
-              All matches show "Not played yet" status as tournament hasn't started
-            </p>
-          </div>
-
-          {/* GroupStageFixtures Component with Mobile Wrapper */}
-          <div className="overflow-x-auto -mx-2 sm:mx-0 px-2 sm:px-0">
-            <div className="min-w-[320px] sm:min-w-0">
-              <GroupStageFixtures />
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+              <div>
+                <h2 className="text-xl sm:text-2xl font-bold text-white mb-1">
+                  Group Stage Fixtures
+                </h2>
+                <p className="text-gray-400 text-sm sm:text-base">
+                  All matches show "Not played yet" status as tournament hasn't started
+                </p>
+              </div>
+              <div className="flex items-center">
+                <span className="text-xs text-gray-400 bg-gray-800/50 px-3 py-1.5 rounded-full">
+                  Tap team cards to search players
+                </span>
+              </div>
             </div>
           </div>
+
+          {/* GroupStageFixtures Component with default group */}
+          <GroupStageFixtures defaultGroup={groupParam || 'A'} />
         </div>
 
         {/* Tournament Info - Mobile Stacked */}

@@ -30,15 +30,26 @@ interface WorldCupData {
   lastUpdated: string;
 }
 
-export default function GroupStageFixtures() {
+interface GroupStageFixturesProps {
+  defaultGroup?: string;
+}
+
+export default function GroupStageFixtures({ defaultGroup = "A" }: GroupStageFixturesProps) {
   const [data, setData] = useState<WorldCupData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedGroup, setSelectedGroup] = useState<string>("A");
+  const [selectedGroup, setSelectedGroup] = useState<string>(defaultGroup);
 
   useEffect(() => {
     fetchWorldCupData();
   }, []);
+
+  // Update selected group when defaultGroup prop changes
+  useEffect(() => {
+    if (defaultGroup && defaultGroup !== selectedGroup) {
+      setSelectedGroup(defaultGroup);
+    }
+  }, [defaultGroup]);
 
   const fetchWorldCupData = async () => {
     try {
@@ -80,6 +91,47 @@ export default function GroupStageFixtures() {
     if (!data) return [];
     const group = data.groups.find((g) => g.id === selectedGroup);
     return group ? group.matches : [];
+  };
+
+  // Function to get team flag emoji
+  const getTeamFlag = (teamName: string) => {
+    const flags: Record<string, string> = {
+      'Mexico': '🇲🇽', 'USA': '🇺🇸', 'Canada': '🇨🇦',
+      'Brazil': '🇧🇷', 'Argentina': '🇦🇷', 'Germany': '🇩🇪',
+      'France': '🇫🇷', 'Spain': '🇪🇸', 'England': '🏴󠁧󠁢󠁥󠁮󠁧󠁿',
+      'Portugal': '🇵🇹', 'Italy': '🇮🇹', 'Netherlands': '🇳🇱',
+      'Japan': '🇯🇵', 'South Korea': '🇰🇷', 'Australia': '🇦🇺',
+      'Morocco': '🇲🇦', 'Senegal': '🇸🇳', 'Egypt': '🇪🇬',
+      'Uruguay': '🇺🇾', 'Chile': '🇨🇱', 'Colombia': '🇨🇴',
+      'Belgium': '🇧🇪', 'Croatia': '🇭🇷', 'Switzerland': '🇨🇭',
+      'Denmark': '🇩🇰', 'Sweden': '🇸🇪', 'Norway': '🇳🇴',
+      'South Africa': '🇿🇦', 'Nigeria': '🇳🇬', 'Ghana': '🇬🇭',
+      'Ivory Coast': '🇨🇮', 'Cameroon': '🇨🇲', 'Algeria': '🇩🇿',
+      'Tunisia': '🇹🇳', 'Saudi Arabia': '🇸🇦', 'Iran': '🇮🇷',
+      'Qatar': '🇶🇦', 'United Arab Emirates': '🇦🇪',
+      'Costa Rica': '🇨🇷', 'Panama': '🇵🇦', 'Jamaica': '🇯🇲',
+      'Honduras': '🇭🇳', 'El Salvador': '🇸🇻', 'Peru': '🇵🇪',
+      'Ecuador': '🇪🇨', 'Paraguay': '🇵🇾', 'Bolivia': '🇧🇴',
+      'Venezuela': '🇻🇪', 'Russia': '🇷🇺', 'Ukraine': '🇺🇦',
+      'Poland': '🇵🇱', 'Czech Republic': '🇨🇿', 'Slovakia': '🇸🇰',
+      'Hungary': '🇭🇺', 'Romania': '🇷🇴', 'Bulgaria': '🇧🇬',
+      'Serbia': '🇷🇸', 'Bosnia': '🇧🇦', 'Slovenia': '🇸🇮',
+      'North Macedonia': '🇲🇰', 'Albania': '🇦🇱', 'Greece': '🇬🇷',
+      'Turkey': '🇹🇷', 'Israel': '🇮🇱', 'Scotland': '🏴󠁧󠁢󠁳󠁣󠁴󠁿',
+      'Wales': '🏴󠁧󠁢󠁷󠁬󠁳󠁿', 'Northern Ireland': '🇬🇧',
+      'Republic of Ireland': '🇮🇪', 'Finland': '🇫🇮',
+      'Iceland': '🇮🇸', 'Faroe Islands': '🇫🇴'
+    };
+    
+    // Check for exact match first
+    if (flags[teamName]) return flags[teamName];
+    
+    // Check for partial matches
+    for (const [country, flag] of Object.entries(flags)) {
+      if (teamName.includes(country)) return flag;
+    }
+    
+    return '⚽'; // Default football emoji
   };
 
   if (loading) {
@@ -142,8 +194,7 @@ export default function GroupStageFixtures() {
         </p>
         <div className="mt-4 p-3 bg-blue-900/20 rounded-lg border border-blue-800/30">
           <p className="text-blue-300 text-sm md:text-base">
-            <span className="font-semibold">Status:</span> All matches are
-            scheduled. Tournament starts June 11, 2026.
+            <span className="font-semibold">Tip:</span> Tap on team cards to search for players and get detailed stats.
           </p>
         </div>
       </div>
@@ -170,24 +221,51 @@ export default function GroupStageFixtures() {
         </div>
       </div>
 
-      {/* Group Teams - Mobile Grid */}
+      {/* Group Teams - Interactive Team Cards */}
       <div className="mb-6">
-        <h3 className="text-lg md:text-xl font-bold text-white mb-3">
-          {data.groups.find((g) => g.id === selectedGroup)?.name}
-        </h3>
-        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+        <div className="flex items-center justify-between mb-3">
+          <h3 className="text-lg md:text-xl font-bold text-white">
+            {data.groups.find((g) => g.id === selectedGroup)?.name}
+          </h3>
+          <span className="text-xs text-gray-400 bg-gray-800/50 px-2 py-1 rounded">
+            Tap to search players
+          </span>
+        </div>
+        <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-4 gap-3 mb-4">
           {data.groups
             .find((g) => g.id === selectedGroup)
             ?.teams.map((team, index) => (
-              <div
+              <a
                 key={team}
-                className="bg-gray-800/30 p-3 rounded-xl border border-gray-700/50 text-center hover:bg-gray-700/40 transition"
+                href={`/?search=${encodeURIComponent(team)}&group=${selectedGroup}`}
+                className="group bg-gray-800/30 p-4 rounded-xl border border-gray-700/50 text-center hover:bg-gray-700/40 hover:border-blue-500/50 transition-all duration-200 hover:scale-[1.02] block"
               >
-                <span className="font-medium text-white text-sm md:text-base">
+                <div className="text-2xl mb-2 transform group-hover:scale-110 transition-transform duration-200">
+                  {getTeamFlag(team)}
+                </div>
+                <span className="font-medium text-white text-sm md:text-base block">
                   {team}
                 </span>
-              </div>
+                <div className="mt-2 flex items-center justify-center">
+                  <span className="text-xs text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity duration-200 flex items-center">
+                    Search players
+                    <svg className="w-3 h-3 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </span>
+                  <span className="text-xs text-gray-500 group-hover:hidden">
+                    Team
+                  </span>
+                </div>
+              </a>
             ))}
+        </div>
+        
+        {/* Group Navigation Hint */}
+        <div className="text-center mb-4">
+          <p className="text-xs text-gray-500">
+            Searching players from this group? Use the "Back to Group {selectedGroup}" button on the results page.
+          </p>
         </div>
       </div>
 
@@ -221,9 +299,12 @@ export default function GroupStageFixtures() {
                 <td className="px-4 py-3">
                   <div className="flex items-center space-x-2 md:space-x-4">
                     <div className="flex-1 text-right">
-                      <span className="font-bold text-white text-sm md:text-base">
+                      <a 
+                        href={`/?search=${encodeURIComponent(match.team1)}&group=${selectedGroup}`}
+                        className="font-bold text-white text-sm md:text-base hover:text-blue-300 transition"
+                      >
                         {match.team1}
-                      </span>
+                      </a>
                     </div>
                     <div className="flex flex-col items-center min-w-[60px] md:min-w-[80px]">
                       <div className="px-2 md:px-3 py-1 bg-gray-800/50 rounded-lg">
@@ -236,9 +317,12 @@ export default function GroupStageFixtures() {
                       </div>
                     </div>
                     <div className="flex-1">
-                      <span className="font-bold text-white text-sm md:text-base">
+                      <a 
+                        href={`/?search=${encodeURIComponent(match.team2)}&group=${selectedGroup}`}
+                        className="font-bold text-white text-sm md:text-base hover:text-blue-300 transition"
+                      >
                         {match.team2}
-                      </span>
+                      </a>
                     </div>
                   </div>
                 </td>
@@ -268,7 +352,7 @@ export default function GroupStageFixtures() {
           <div>
             <p className="text-xs md:text-sm text-gray-400">
               <span className="font-medium text-gray-300">
-                Total matches in {selectedGroup}:
+                Total matches in Group {selectedGroup}:
               </span>{" "}
               {getGroupMatches().length}
             </p>
@@ -277,7 +361,7 @@ export default function GroupStageFixtures() {
               {formatDate(data.tournamentStart)}
             </p>
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <button
               onClick={fetchWorldCupData}
               className="px-3 md:px-4 py-2 text-xs md:text-sm bg-gray-800/60 text-gray-300 rounded-lg hover:bg-gray-700/60 transition font-medium"
@@ -287,9 +371,15 @@ export default function GroupStageFixtures() {
             <a
               href="/api/worldcup"
               target="_blank"
-              className="px-3 md:px-4 py-2 text-xs md:text-sm bg-gradient-to-r from-blue-600 to-green-500 text-white rounded-lg hover:opacity-90 transition font-medium"
+              className="px-3 md:px-4 py-2 text-xs md:text-sm bg-gradient-to-r from-blue-600 to-green-500 text-white rounded-lg hover:opacity-90 transition font-medium text-center"
             >
               View API Data
+            </a>
+            <a
+              href="/"
+              className="px-3 md:px-4 py-2 text-xs md:text-sm bg-gradient-to-r from-purple-600 to-pink-500 text-white rounded-lg hover:opacity-90 transition font-medium text-center"
+            >
+              Back to Search
             </a>
           </div>
         </div>
