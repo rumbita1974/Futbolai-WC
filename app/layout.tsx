@@ -19,12 +19,25 @@ export const metadata: Metadata = {
     'player stats',
     'team analysis',
     'football highlights',
+    'Cristiano Ronaldo',
+    'Lionel Messi',
+    'Kylian Mbappé',
     'football statistics',
-    'football intelligence'
+    'football intelligence',
+    'soccer analytics'
   ],
   authors: [{ name: 'A. Guillen' }],
   creator: 'FutbolAI',
   publisher: 'FutbolAI',
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL('https://www.futbolai.org'), // CORRECTED DOMAIN
+  alternates: {
+    canonical: '/',
+  },
   robots: {
     index: true,
     follow: true,
@@ -39,13 +52,13 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: 'https://futbolai-wc.vercel.app',
+    url: 'https://www.futbolai.org', // CORRECTED DOMAIN
     title: 'FutbolAI Explorer | AI-Powered Football Intelligence',
     description: 'AI-powered football intelligence with detailed stats, achievements, and video highlights for World Cup 2026',
     siteName: 'FutbolAI Explorer',
     images: [
       {
-        url: '/og-image.png',
+        url: 'https://www.futbolai.org/og-image.png', // CORRECTED DOMAIN
         width: 1200,
         height: 630,
         alt: 'FutbolAI Explorer - AI-Powered Football Intelligence Platform',
@@ -56,7 +69,7 @@ export const metadata: Metadata = {
     card: 'summary_large_image',
     title: 'FutbolAI Explorer | AI-Powered Football Intelligence',
     description: 'AI-powered football intelligence with detailed stats, achievements, and video highlights for World Cup 2026',
-    images: ['/og-image.png'],
+    images: ['https://www.futbolai.org/og-image.png'], // CORRECTED DOMAIN
   },
 };
 
@@ -71,7 +84,7 @@ export default function RootLayout({
         <link rel="icon" href="/favicon.ico" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         
-        {/* Structured Data for SEO */}
+        {/* Structured Data for SEO - ALL DOMAINS CORRECTED */}
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
@@ -80,18 +93,34 @@ export default function RootLayout({
               '@type': 'WebSite',
               'name': 'FutbolAI Explorer',
               'description': 'AI-powered football intelligence platform',
-              'url': 'https://futbolai-wc.vercel.app',
+              'url': 'https://www.futbolai.org', // CORRECTED DOMAIN
               'potentialAction': {
                 '@type': 'SearchAction',
-                'target': 'https://futbolai-wc.vercel.app/?q={search_term_string}',
+                'target': 'https://www.futbolai.org/?q={search_term_string}', // CORRECTED DOMAIN
                 'query-input': 'required name=search_term_string'
               }
             })
           }}
         />
+        
+        {/* Additional Sports schema for better SEO */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              '@context': 'https://schema.org',
+              '@type': 'SportsOrganization',
+              'name': 'FutbolAI Football Intelligence',
+              'url': 'https://www.futbolai.org', // CORRECTED DOMAIN
+              'description': 'AI-powered football analysis and statistics for World Cup 2026',
+              'sport': 'Association football',
+              'knowsAbout': ['Football statistics', 'Player analysis', 'Team tactics', 'World Cup 2026'],
+            })
+          }}
+        />
       </head>
       <body className={`${inter.className} bg-gradient-to-b from-gray-900 via-gray-800 to-black min-h-screen text-white pb-16 md:pb-0`}>
-        {/* Main Navigation - FIXED PATHS */}
+        {/* Main Navigation - Using relative paths (correct) */}
         <nav className="sticky top-0 z-50 bg-gray-900/95 backdrop-blur-md border-b border-gray-800">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -110,7 +139,7 @@ export default function RootLayout({
                 </a>
               </div>
 
-              {/* Desktop Navigation - CORRECTED PATHS */}
+              {/* Desktop Navigation - Using relative paths (correct) */}
               <div className="hidden md:flex items-center space-x-6">
                 <a href="/" className="text-gray-300 hover:text-white font-medium px-3 py-2 rounded-lg hover:bg-gray-800/50 transition-colors">
                   Home
@@ -173,11 +202,11 @@ export default function RootLayout({
                 Developed by A. Guillen
               </p>
               
-              {/* SEO Footer Links */}
+              {/* SEO Footer Links - Using absolute URLs for sitemap/robots */}
               <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs text-gray-500">
-                <a href="/sitemap.xml" className="hover:text-gray-300">Sitemap</a>
+                <a href="https://www.futbolai.org/sitemap.xml" className="hover:text-gray-300">Sitemap</a>
                 <span aria-hidden="true">•</span>
-                <a href="/robots.txt" className="hover:text-gray-300">Robots.txt</a>
+                <a href="https://www.futbolai.org/robots.txt" className="hover:text-gray-300">Robots.txt</a>
               </div>
             </div>
           </div>

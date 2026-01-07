@@ -1,12 +1,12 @@
 import { MetadataRoute } from 'next';
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = 'https://futbolai-wc.vercel.app';
+  const baseUrl = 'https://www.futbolai.org'; // ⬅️ CORRECTED
   const currentDate = new Date();
   
   return [
     {
-      url: `${baseUrl}`,
+      url: `${baseUrl}/`,
       lastModified: currentDate,
       changeFrequency: 'daily' as const,
       priority: 1,

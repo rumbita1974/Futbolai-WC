@@ -6,6 +6,6 @@ export default function robots(): MetadataRoute.Robots {
       userAgent: '*',
       allow: '/',
     },
-    sitemap: 'https://futbolai-wc.vercel.app/sitemap.xml',
+    sitemap: 'https://www.futbolai.org/sitemap.xml', // ⬅️ CORRECTED
   };
 }
